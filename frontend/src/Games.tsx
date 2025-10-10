@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import authService from './services/authService';
 
 interface Word {
   id: string;
@@ -18,13 +19,13 @@ interface GameQuestion {
   gameType: string;
 }
 
-interface GameStats {
-  totalWords: number;
-  learnedWords: number;
-  learningProgress: number;
-  dailyStreak: number;
-  gamesPlayed: number;
-}
+// interface GameStats {
+//   totalWords: number;
+//   learnedWords: number;
+//   learningProgress: number;
+//   dailyStreak: number;
+//   gamesPlayed: number;
+// }
 
 type GameType = 
   | 'new-letter' 
@@ -45,11 +46,14 @@ interface GamesProps {
 const Games: React.FC<GamesProps> = ({ user }) => {
   const [currentGame, setCurrentGame] = useState<GameType | null>(null);
   const [selectedLetter, setSelectedLetter] = useState<string>('A');
-  const [availableLetters, setAvailableLetters] = useState<string[]>([]);
+  // const [availableLetters, setAvailableLetters] = useState<string[]>([]);
   const [allWords, setAllWords] = useState<Word[]>([]);
   const [gameStats, setGameStats] = useState<any>({});
   const [userLetterProgress, setUserLetterProgress] = useState<{[letter: string]: {learned: number, total: number}}>({});
+  const [playedWordsInSession, setPlayedWordsInSession] = useState<Set<string>>(new Set());
   const [currentQuestion, setCurrentQuestion] = useState<GameQuestion | null>(null);
+  const [showSpellingWord, setShowSpellingWord] = useState<boolean>(true);
+  const spellingTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [showResult, setShowResult] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
@@ -85,26 +89,30 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     if (!user) return;
     
     try {
-      const response = await fetch('http://localhost:3001/api/games/user/letters/progress', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success && data.data) {
-          const progressMap: {[letter: string]: {learned: number, total: number}} = {};
-          data.data.forEach((item: any) => {
-            progressMap[item.letter] = {
-              learned: item.learnedWords,
-              total: item.totalWords
-            };
+          const response = await fetch('http://localhost:3001/api/games/user/letters/progress', {
+            headers: {
+              'Authorization': `Bearer ${authService.getToken()}`
+            }
           });
-          setUserLetterProgress(progressMap);
-          console.log('📊 User letter progress loaded:', progressMap);
-        }
-      }
+      
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.data) {
+              const progressMap: {[letter: string]: {learned: number, total: number}} = {};
+              data.data.forEach((item: any) => {
+                progressMap[item.letter] = {
+                  learned: item.learnedWords,
+                  total: item.totalWords
+                };
+              });
+              setUserLetterProgress(progressMap);
+              console.log('📊 User letter progress loaded:', progressMap);
+            } else {
+              console.warn('⚠️ Letter progress response not successful:', data);
+            }
+          } else {
+            console.warn('⚠️ Failed to load letter progress:', response.status);
+          }
     } catch (error) {
       console.error('Error loading user letter progress:', error);
     }
@@ -118,28 +126,42 @@ const Games: React.FC<GamesProps> = ({ user }) => {
 
       if (user) {
         // User-specific data loading
+        const token = authService.getToken();
         const [wordsResponse, statsResponse] = await Promise.all([
           fetch('http://localhost:3001/api/words?limit=2000', {
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+              'Authorization': `Bearer ${token}`
             }
           }),
           fetch('http://localhost:3001/api/words/user/stats', {
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+              'Authorization': `Bearer ${token}`
             }
           })
         ]);
 
-        if (!wordsResponse.ok || !statsResponse.ok) {
+        if (!wordsResponse.ok) {
           throw new Error(`HTTP error! status: ${wordsResponse.status}`);
+        }
+        
+        if (user && !statsResponse.ok) {
+          console.warn('Failed to load user stats:', statsResponse.status);
+          // Continue without user stats for now
         }
 
         const wordsData = await wordsResponse.json();
-        const statsData = await statsResponse.json();
+        let statsData = { data: {} };
+        
+        if (user && statsResponse.ok) {
+          try {
+            statsData = await statsResponse.json();
+          } catch (error) {
+            console.warn('Failed to parse user stats:', error);
+          }
+        }
         
         words = wordsData.data.data || wordsData.data || [];
-        const userStats = statsData.data || {};
+        const userStats = statsData.data || {} as any;
         
         // Transform user stats to match frontend expectations
         stats = {
@@ -190,7 +212,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
           words.map((w: Word) => w.word.charAt(0).toUpperCase())
         )).sort();
         
-        setAvailableLetters(allAvailableLetters); // Show all letters for new words
+        // setAvailableLetters(allAvailableLetters); // Show all letters for new words
         
         // Auto-select first available letter if current selection has no words
         if (allAvailableLetters.length > 0 && !allAvailableLetters.includes(selectedLetter)) {
@@ -246,7 +268,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
       setLoading(false);
       setError(null);
     };
-  }, [loadWordsAndStats, loadSavedGame]);
+  }, [loadWordsAndStats, loadSavedGame, loadUserLetterProgress]);
 
   // Define endGame function before using it in useEffect
   const endGame = useCallback(() => {
@@ -407,23 +429,57 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     switch (gameType) {
       case 'new-letter':
         // New words starting with selected letter (never answered correctly)
-        filteredWords = allWords.filter((w: Word) => 
-          w.word.toLowerCase().startsWith(selectedLetter.toLowerCase()) && w.correctCount === 0
-        );
+        if (user) {
+          // For authenticated users, we need to check user-specific progress
+          // Since we don't have user-specific word progress loaded, we'll use all words for the letter
+          // and let the backend handle the filtering
+          filteredWords = allWords.filter((w: Word) => 
+            w.word.toLowerCase().startsWith(selectedLetter.toLowerCase())
+          );
+        } else {
+          // For anonymous users, use global progress
+          filteredWords = allWords.filter((w: Word) => 
+            w.word.toLowerCase().startsWith(selectedLetter.toLowerCase()) && w.correctCount === 0
+          );
+        }
         break;
       case 'old-letter':
         // Review words starting with selected letter (answered correctly before)
-        filteredWords = allWords.filter((w: Word) => 
-          w.word.toLowerCase().startsWith(selectedLetter.toLowerCase()) && w.correctCount > 0
-        );
+        if (user) {
+          // For authenticated users, we need to check user-specific progress
+          // Since we don't have user-specific word progress loaded, we'll use all words for the letter
+          // and let the backend handle the filtering
+          filteredWords = allWords.filter((w: Word) => 
+            w.word.toLowerCase().startsWith(selectedLetter.toLowerCase())
+          );
+        } else {
+          // For anonymous users, use global progress
+          filteredWords = allWords.filter((w: Word) => 
+            w.word.toLowerCase().startsWith(selectedLetter.toLowerCase()) && w.correctCount > 0
+          );
+        }
         break;
       case 'random-new':
         // New words (never answered correctly)
-        filteredWords = allWords.filter((w: Word) => w.correctCount === 0);
+        if (user) {
+          // For authenticated users, use all words and let backend filter
+          // The backend will filter based on user progress
+          filteredWords = allWords;
+        } else {
+          // For anonymous users, use global progress
+          filteredWords = allWords.filter((w: Word) => w.correctCount === 0);
+        }
         break;
       case 'random-old':
         // Review words (answered correctly before)
-        filteredWords = allWords.filter((w: Word) => w.correctCount > 0);
+        if (user) {
+          // For authenticated users, use all words and let backend filter
+          // The backend will filter based on user progress
+          filteredWords = allWords;
+        } else {
+          // For anonymous users, use global progress
+          filteredWords = allWords.filter((w: Word) => w.correctCount > 0);
+        }
         break;
       case 'synonym-match':
       case 'spelling':
@@ -440,7 +496,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     }
     
     return filteredWords;
-  }, [allWords, selectedLetter]);
+  }, [allWords, selectedLetter, user]);
 
   // Load next question for the current game
   const loadNextQuestion = useCallback(async (gameType: GameType) => {
@@ -448,6 +504,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     setShowResult(false);
     setSelectedAnswer('');
     setError(null);
+    setShowSpellingWord(true); // Show word initially for spelling games
 
     try {
       // If we don't have words loaded yet, wait for initial loading to complete
@@ -477,7 +534,51 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         }
       }
       
-      const filteredWords = getFilteredWords(gameType);
+      let filteredWords = getFilteredWords(gameType);
+      
+      // For authenticated users, get user-specific words from backend
+      if (user && (gameType === 'new-letter' || gameType === 'old-letter' || gameType === 'random-new' || gameType === 'random-old')) {
+        try {
+          let endpoint = '';
+          if (gameType === 'new-letter') {
+            endpoint = `http://localhost:3001/api/games/user/letter/${selectedLetter.toLowerCase()}/new`;
+          } else if (gameType === 'old-letter') {
+            endpoint = `http://localhost:3001/api/games/user/letter/${selectedLetter.toLowerCase()}/old`;
+          } else if (gameType === 'random-new') {
+            endpoint = `http://localhost:3001/api/words/user/new`;
+          } else if (gameType === 'random-old') {
+            endpoint = `http://localhost:3001/api/words/user/learned`;
+          }
+          
+          if (endpoint) {
+            const response = await fetch(endpoint, {
+              headers: {
+                'Authorization': `Bearer ${authService.getToken()}`
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              if (data.success && data.data && data.data.length > 0) {
+                // Convert backend format to frontend format
+                filteredWords = data.data.map((item: any) => ({
+                  id: item.word?.id || item.id,
+                  word: item.word?.word || item.word,
+                  synonyms: item.word?.synonyms || item.synonyms,
+                  difficulty: item.word?.difficulty || item.difficulty,
+                  correctCount: 0, // Will be handled by user progress
+                  incorrectCount: 0
+                }));
+                console.log(`✅ Loaded ${filteredWords.length} user-specific ${gameType} words`);
+              }
+            } else {
+              console.warn(`Failed to load user-specific words for ${gameType}:`, response.status);
+            }
+          }
+        } catch (error) {
+          console.warn(`Error loading user-specific words for ${gameType}:`, error);
+        }
+      }
       
       if (filteredWords.length === 0) {
         let message = '';
@@ -512,18 +613,35 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         return;
       }
 
-      // Filter out recently asked words (avoid repetition)
-      const availableWords = filteredWords.filter(w => !recentlyAskedWords.includes(w.id));
-      const wordsToSelectFrom = availableWords.length > 0 ? availableWords : filteredWords;
+      // Filter out recently asked words and words played in current session (avoid repetition)
+      const availableWords = filteredWords.filter(w => 
+        !recentlyAskedWords.includes(w.id) && !playedWordsInSession.has(w.id)
+      );
+      
+      let wordsToSelectFrom = availableWords;
+      
+      // If no words available (all have been played), reset session tracking
+      if (availableWords.length === 0) {
+        setPlayedWordsInSession(new Set());
+        console.log('🔄 All words in this game mode have been played. Resetting session tracking.');
+        wordsToSelectFrom = filteredWords;
+      }
       
       // Select a random word from available words
       const randomIndex = Math.floor(Math.random() * wordsToSelectFrom.length);
       const selectedWord = wordsToSelectFrom[randomIndex];
       
-      // Add to recently asked words (keep last 5)
+      // Add to recently asked words (keep last 5) and session tracking
       setRecentlyAskedWords((prev: string[]) => {
         const updated = [selectedWord.id, ...prev.filter((id: string) => id !== selectedWord.id)];
         return updated.slice(0, 5); // Keep only last 5
+      });
+      
+      // Add to session tracking for uniqueness within the game
+      setPlayedWordsInSession((prev: Set<string>) => {
+        const newSet = new Set(prev);
+        newSet.add(selectedWord.id);
+        return newSet;
       });
       
       // Validate the selected word has synonyms
@@ -602,7 +720,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     } finally {
       setLoading(false);
     }
-  }, [allWords, initialLoading, selectedLetter, retryCount, getFilteredWords, generateMultipleChoiceOptions, loadWordsAndStats, recentlyAskedWords]);
+  }, [allWords, initialLoading, selectedLetter, retryCount, getFilteredWords, generateMultipleChoiceOptions, loadWordsAndStats, recentlyAskedWords, playedWordsInSession, user]);
 
   // Load first question when game starts
   useEffect(() => {
@@ -614,6 +732,33 @@ const Games: React.FC<GamesProps> = ({ user }) => {
       return () => clearTimeout(timer);
     }
   }, [currentGame, gameStarted, currentQuestion, loadNextQuestion, recentlyAskedWords]);
+
+  // Hide spelling word after 3 seconds
+  useEffect(() => {
+    if (currentGame === 'spelling' && currentQuestion && showSpellingWord) {
+      console.log('⏰ Starting 3-second timer to hide spelling word:', currentQuestion.questionWord.word);
+      
+      // Clear any existing timer first
+      if (spellingTimerRef.current) {
+        clearTimeout(spellingTimerRef.current);
+      }
+      
+      spellingTimerRef.current = setTimeout(() => {
+        console.log('⏰ Hiding spelling word after 3 seconds');
+        setShowSpellingWord(false);
+        spellingTimerRef.current = null;
+      }, 3000);
+    }
+
+    // Cleanup function
+    return () => {
+      if (spellingTimerRef.current) {
+        console.log('⏰ Clearing spelling word timer');
+        clearTimeout(spellingTimerRef.current);
+        spellingTimerRef.current = null;
+      }
+    };
+  }, [currentGame, currentQuestion?.questionWord?.word]); // Only depend on the word, not showSpellingWord
 
   const startGame = async (gameType: GameType) => {
     // Prevent multiple rapid game starts
@@ -631,13 +776,16 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     setError(null);
     setRetryCount(0); // Reset retry count for new game
     setRecentlyAskedWords([]); // Clear recently asked words
+    setPlayedWordsInSession(new Set()); // Clear session tracking for uniqueness
+    setShowSpellingWord(true); // Reset spelling word visibility
     
     // Set new game state
     setCurrentGame(gameType);
     setScore(0);
     setStreak(0);
     setQuestionsAnswered(0);
-    setWordLadderStep(0);
+    setWordLadderStep(0); // Initialize word ladder step (0-based, displays as Step 1)
+    console.log('🪜 Word Ladder: Game started, initializing step to 0 (displays as Step 1)');
     setGameStarted(true);
     
     // Load the first question first, then start timer
@@ -656,9 +804,21 @@ const Games: React.FC<GamesProps> = ({ user }) => {
 
 
   const handleAnswer = (answer: string) => {
-    setSelectedAnswer(answer);
-    
-    if (currentQuestion) {
+    try {
+      setSelectedAnswer(answer);
+      
+      if (!currentQuestion) {
+        console.error('❌ No current question available');
+        setError('No question available. Please try again.');
+        return;
+      }
+
+      if (!currentQuestion.correctAnswer) {
+        console.error('❌ No correct answer available for current question');
+        setError('Invalid question. Please try again.');
+        return;
+      }
+
       const isCorrect = answer.toLowerCase() === currentQuestion.correctAnswer.toLowerCase();
       
       // Use functional state updates to avoid race conditions
@@ -680,7 +840,11 @@ const Games: React.FC<GamesProps> = ({ user }) => {
       if (isCorrect) {
         // Word Ladder gets bonus points for climbing and advances step
         if (currentGame === 'word-ladder') {
-          setWordLadderStep((prevStep: number) => prevStep + 1);
+          setWordLadderStep((prevStep: number) => {
+            const newStep = prevStep + 1;
+            console.log(`🪜 Word Ladder: Correct answer! Step ${prevStep} → ${newStep} (displays as Step ${newStep + 1})`);
+            return newStep;
+          });
         }
         // Always increment questions answered for correct answers
         setQuestionsAnswered((prevCount: number) => prevCount + 1);
@@ -688,6 +852,8 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         // For non-word-ladder games, still increment questions answered for wrong answers
         if (currentGame !== 'word-ladder') {
           setQuestionsAnswered((prevCount: number) => prevCount + 1);
+        } else {
+          console.log(`🪜 Word Ladder: Wrong answer! Staying on step ${wordLadderStep} (display: ${wordLadderStep + 1})`);
         }
       }
       
@@ -695,6 +861,9 @@ const Games: React.FC<GamesProps> = ({ user }) => {
       
       // Update word progress in database (async, don't wait for it)
       updateWordProgress(currentQuestion.questionWord.id, isCorrect);
+    } catch (error) {
+      console.error('❌ Error in handleAnswer:', error);
+      setError('An error occurred while processing your answer. Please try again.');
     }
   };
 
@@ -706,7 +875,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+            'Authorization': `Bearer ${authService.getToken()}`
           },
           body: JSON.stringify({
             wordId: wordId,
@@ -717,13 +886,14 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         });
 
         if (response.ok) {
-          console.log(`✅ User progress updated: ${isCorrect ? 'correct' : 'incorrect'}`);
+          console.log(`✅ User progress updated for ${currentGame}: ${isCorrect ? 'correct' : 'incorrect'}`);
           
           // Reload user stats and letter progress
+          console.log('🔄 Reloading user stats and letter progress...');
           const [statsResponse] = await Promise.all([
             fetch('http://localhost:3001/api/words/user/stats', {
               headers: {
-                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                'Authorization': `Bearer ${authService.getToken()}`
               }
             }),
             loadUserLetterProgress() // Reload letter progress
@@ -743,7 +913,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
             };
             
             setGameStats(updatedStats);
-            console.log('📊 Stats updated:', updatedStats);
+            console.log('📊 Stats updated for', currentGame, ':', updatedStats);
           }
         } else {
           const errorData = await response.json();
@@ -851,7 +1021,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                 <span>Score: {savedGame.score}</span>
                 <span>Streak: {savedGame.streak}</span>
                 {savedGame.gameType === 'word-ladder' ? (
-                  <span>Step: {savedGame.wordLadderStep}</span>
+                  <span>Step: {Math.max(1, savedGame.wordLadderStep + 1)}</span>
                 ) : (
                   <span>Questions: {savedGame.questionsAnswered}</span>
                 )}
@@ -1026,7 +1196,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
             <span>Score: {score}</span>
             <span>Streak: {streak}</span>
             {currentGame === 'word-ladder' ? (
-              <span>Step: {wordLadderStep}</span>
+              <span>Step: {Math.max(1, wordLadderStep + 1)}</span>
             ) : (
               <span>Questions: {questionsAnswered}</span>
             )}
@@ -1055,12 +1225,14 @@ const Games: React.FC<GamesProps> = ({ user }) => {
           </div>
         ) : (
           <div className="question-container">
-            <div className="question-word">
-              <h3>{currentQuestion.questionWord.word}</h3>
-              <span className={`difficulty ${currentQuestion.difficulty}`}>
-                {currentQuestion.difficulty}
-              </span>
-            </div>
+            {currentGame !== 'spelling' && (
+              <div className="question-word">
+                <h3>{currentQuestion.questionWord.word}</h3>
+                <span className={`difficulty ${currentQuestion.difficulty}`}>
+                  {currentQuestion.difficulty}
+                </span>
+              </div>
+            )}
 
             {currentGame === 'synonym-match' && (
               <div className="question-text">
@@ -1088,8 +1260,8 @@ const Games: React.FC<GamesProps> = ({ user }) => {
 
             {currentGame === 'word-ladder' && (
               <div className="question-text">
-                <div style={{ marginBottom: '10px' }}>🪜 Word Ladder - Step {wordLadderStep + 1}</div>
-                What is a synonym for "<strong>{currentQuestion.questionWord.word}</strong>"?
+                <div style={{ marginBottom: '10px' }}>🪜 Word Ladder - Step {Math.max(1, wordLadderStep + 1)}</div>
+                What is a synonym for "<strong>{currentQuestion?.questionWord?.word || 'Loading...'}</strong>"?
                 <div style={{ marginTop: '10px', fontSize: '0.9em', color: '#666' }}>
                   Correct answers climb the ladder! Wrong answers keep you on the same step.
                 </div>
@@ -1110,7 +1282,36 @@ const Games: React.FC<GamesProps> = ({ user }) => {
 
             {currentGame === 'spelling' && (
               <div className="question-text">
-                Spell the word that means: <strong>{currentQuestion.questionWord.synonyms[0]?.word}</strong>
+                <div style={{ marginBottom: '20px' }}>
+                  {showSpellingWord ? (
+                    <div>
+                      <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '10px', color: '#2d3748' }}>
+                        {currentQuestion.questionWord.word}
+                      </div>
+                      <span className={`difficulty ${currentQuestion.difficulty}`} style={{ marginBottom: '10px', display: 'block' }}>
+                        {currentQuestion.difficulty}
+                      </span>
+                      <div style={{ fontSize: '1.2rem', color: '#666' }}>
+                        Spell the word that means: <strong>{currentQuestion.questionWord.synonyms[0]?.word}</strong>
+                      </div>
+                      <div style={{ fontSize: '0.9rem', color: '#999', marginTop: '5px' }}>
+                        (Word will be hidden in 3 seconds...)
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <span className={`difficulty ${currentQuestion.difficulty}`} style={{ marginBottom: '10px', display: 'block' }}>
+                        {currentQuestion.difficulty}
+                      </span>
+                      <div style={{ fontSize: '1.2rem', color: '#666' }}>
+                        Spell the word that means: <strong>{currentQuestion.questionWord.synonyms[0]?.word}</strong>
+                      </div>
+                      <div style={{ marginTop: '10px', fontSize: '1rem', color: '#999' }}>
+                        (Word hidden - type from memory!)
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <input 
                   type="text" 
                   value={selectedAnswer}

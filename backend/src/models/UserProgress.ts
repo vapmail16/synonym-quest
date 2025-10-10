@@ -69,9 +69,14 @@ export class UserProgressModel extends Model<UserProgressAttributes, UserProgres
     const totalAttempts = progress.correctCount + progress.incorrectCount;
     const accuracy = totalAttempts > 0 ? progress.correctCount / totalAttempts : 0;
     
-    if (accuracy >= 0.9 && progress.streak >= 3) {
-      progress.masteryLevel = Math.min(5, progress.masteryLevel + 1);
-    } else if (accuracy < 0.5 && totalAttempts >= 3) {
+    // More lenient mastery level calculation for better learning experience
+    if (progress.correctCount >= 2 && accuracy >= 0.8) {
+      progress.masteryLevel = Math.min(5, Math.max(4, progress.masteryLevel + 1));
+    } else if (progress.correctCount >= 2 && accuracy >= 0.6) {
+      progress.masteryLevel = Math.min(3, Math.max(2, progress.masteryLevel + 1));
+    } else if (progress.correctCount >= 1 && accuracy >= 0.5) {
+      progress.masteryLevel = Math.min(2, Math.max(1, progress.masteryLevel + 1));
+    } else if (accuracy < 0.3 && totalAttempts >= 2) {
       progress.masteryLevel = Math.max(0, progress.masteryLevel - 1);
     }
 
@@ -95,7 +100,7 @@ export class UserProgressModel extends Model<UserProgressAttributes, UserProgres
       where: { userId }
     });
 
-    const totalWordsLearned = allProgress.filter(p => p.masteryLevel >= 3).length;
+    const totalWordsLearned = allProgress.filter(p => p.masteryLevel >= 2).length;
     const totalGamesPlayed = allProgress.reduce((sum, p) => sum + p.correctCount + p.incorrectCount, 0);
     
     const currentStreak = Math.max(...allProgress.map(p => p.streak), 0);
