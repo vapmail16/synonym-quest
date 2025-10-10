@@ -1,17 +1,21 @@
 # Frontend Dockerfile
-FROM node:18-alpine as build
+FROM node:16-alpine as build
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files from frontend directory
-COPY frontend/package*.json ./
+# Copy only package.json first
+COPY frontend/package.json ./
 
 # Show package.json for debugging
 RUN cat package.json
 
-# Install dependencies (including dev dependencies for build)
-RUN npm ci --verbose
+# Show npm version for debugging
+RUN npm --version
+
+# Clear npm cache and install dependencies with error handling
+RUN npm cache clean --force || true
+RUN npm install --verbose --no-optional --legacy-peer-deps
 
 # Copy frontend source code
 COPY frontend/ .
