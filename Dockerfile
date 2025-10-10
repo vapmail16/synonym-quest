@@ -7,14 +7,23 @@ WORKDIR /app
 # Copy package files from frontend directory
 COPY frontend/package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Show package.json for debugging
+RUN cat package.json
+
+# Install dependencies (including dev dependencies for build)
+RUN npm ci --verbose
 
 # Copy frontend source code
 COPY frontend/ .
 
+# Show directory structure for debugging
+RUN ls -la
+
 # Build the application
 RUN npm run build
+
+# Clean up dev dependencies to reduce image size
+RUN npm prune --production
 
 # Production stage
 FROM nginx:alpine
