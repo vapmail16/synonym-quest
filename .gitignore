@@ -15,6 +15,13 @@ build/
 .env.test.local
 .env.production.local
 
+# Database migration scripts (contain sensitive info)
+backend/compare-databases.js
+backend/test-remote-db.js
+backend/migrate-*.js
+migrate-*.js
+test-remote-db.js
+
 # IDE files
 .vscode/
 .idea/

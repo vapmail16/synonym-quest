@@ -1,15 +1,24 @@
 // Test script to verify remote database connection
+// IMPORTANT: Set environment variables before running this script
 const { Client } = require('pg');
 
 const remoteConfig = {
-  host: 'vocabdb-ictxdwcqsq.tcp-proxy-2212.dcdeploy.cloud',
-  port: 30575,
-  database: 'vocabdb-db',
-  user: 'VjIKfz',
-  password: ')t=0rdZe^='
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT),
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD
 };
 
 async function testRemoteConnection() {
+  // Validate environment variables
+  if (!remoteConfig.host || !remoteConfig.port || !remoteConfig.database || !remoteConfig.user || !remoteConfig.password) {
+    console.error('❌ Missing required environment variables:');
+    console.error('Required: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD');
+    console.error('Set these in your .env file or export them in your shell');
+    process.exit(1);
+  }
+
   const client = new Client(remoteConfig);
   
   try {
@@ -43,7 +52,6 @@ async function testRemoteConnection() {
     
   } catch (error) {
     console.error('❌ Connection failed:', error.message);
-    console.error('Stack trace:', error.stack);
   } finally {
     await client.end();
     console.log('🔌 Connection closed');

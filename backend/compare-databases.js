@@ -1,30 +1,41 @@
 // Database comparison script: Local vs Remote PostgreSQL
+// IMPORTANT: Set environment variables before running this script
 const { Client } = require('pg');
 
-// Local database configuration
+// Local database configuration (from environment variables)
 const localConfig = {
-  host: 'localhost',
-  port: 5432,
-  database: 'synonym_quest',
-  user: 'vikkasarunpareek',
-  password: ''
+  host: process.env.LOCAL_DB_HOST || 'localhost',
+  port: parseInt(process.env.LOCAL_DB_PORT) || 5432,
+  database: process.env.LOCAL_DB_NAME || 'synonym_quest',
+  user: process.env.LOCAL_DB_USER || 'postgres',
+  password: process.env.LOCAL_DB_PASSWORD || ''
 };
 
-// Remote database configuration
+// Remote database configuration (from environment variables)
 const remoteConfig = {
-  host: 'vocabdb-ictxdwcqsq.tcp-proxy-2212.dcdeploy.cloud',
-  port: 30575,
-  database: 'vocabdb-db',
-  user: 'VjIKfz',
-  password: ')t=0rdZe^='
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT),
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD
 };
 
 async function compareDatabases() {
+  // Validate environment variables
+  if (!remoteConfig.host || !remoteConfig.port || !remoteConfig.database || !remoteConfig.user || !remoteConfig.password) {
+    console.error('❌ Missing required environment variables:');
+    console.error('Required: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD');
+    console.error('Optional (for local): LOCAL_DB_HOST, LOCAL_DB_PORT, LOCAL_DB_NAME, LOCAL_DB_USER, LOCAL_DB_PASSWORD');
+    process.exit(1);
+  }
+
   const localClient = new Client(localConfig);
   const remoteClient = new Client(remoteConfig);
   
   try {
     console.log('🔄 Starting database comparison...');
+    console.log('📍 Local DB:', `${localConfig.host}:${localConfig.port}/${localConfig.database}`);
+    console.log('📍 Remote DB:', `${remoteConfig.host}:${remoteConfig.port}/${remoteConfig.database}`);
     
     // Connect to both databases
     await localClient.connect();
@@ -102,36 +113,6 @@ async function compareDatabases() {
       console.log(`  📝 Columns - Local: ${localColumns.length}, Remote: ${remoteColumns.length}`);
       console.log(`  ✅ Common: ${commonColumns.length}, Local only: ${localOnlyColumns.length}, Remote only: ${remoteOnlyColumns.length}`);
       
-      // Show column differences
-      if (localOnlyColumns.length > 0) {
-        console.log(`  ⚠️  Local only columns:`, localOnlyColumns);
-      }
-      if (remoteOnlyColumns.length > 0) {
-        console.log(`  ⚠️  Remote only columns:`, remoteOnlyColumns);
-      }
-      
-      // Compare data types for common columns
-      const columnDifferences = [];
-      for (const colName of commonColumns) {
-        const localCol = localColumns.find(col => col.column_name === colName);
-        const remoteCol = remoteColumns.find(col => col.column_name === colName);
-        
-        if (localCol.data_type !== remoteCol.data_type) {
-          columnDifferences.push({
-            column: colName,
-            local: localCol.data_type,
-            remote: remoteCol.data_type
-          });
-        }
-      }
-      
-      if (columnDifferences.length > 0) {
-        console.log(`  🔄 Column type differences:`);
-        columnDifferences.forEach(diff => {
-          console.log(`    ${diff.column}: Local(${diff.local}) vs Remote(${diff.remote})`);
-        });
-      }
-      
       // Get row counts
       const localCountResult = await localClient.query(`SELECT COUNT(*) FROM ${tableName}`);
       const remoteCountResult = await remoteClient.query(`SELECT COUNT(*) FROM ${tableName}`);
@@ -144,70 +125,12 @@ async function compareDatabases() {
       if (localCount !== remoteCount) {
         console.log(`  ⚠️  Row count mismatch: ${Math.abs(localCount - remoteCount)} difference`);
       }
-      
-      // Sample data comparison for small tables
-      if (localCount <= 10 && remoteCount <= 10 && localCount > 0) {
-        console.log(`  🔍 Sample data comparison:`);
-        
-        const localDataResult = await localClient.query(`SELECT * FROM ${tableName} ORDER BY 1 LIMIT 5`);
-        const remoteDataResult = await remoteClient.query(`SELECT * FROM ${tableName} ORDER BY 1 LIMIT 5`);
-        
-        const localData = localDataResult.rows;
-        const remoteData = remoteDataResult.rows;
-        
-        console.log(`    Local sample (${localData.length} rows):`);
-        localData.forEach((row, index) => {
-          const rowStr = Object.entries(row).map(([key, value]) => 
-            `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`
-          ).join(', ');
-          console.log(`      ${index + 1}. ${rowStr}`);
-        });
-        
-        console.log(`    Remote sample (${remoteData.length} rows):`);
-        remoteData.forEach((row, index) => {
-          const rowStr = Object.entries(row).map(([key, value]) => 
-            `${key}: ${typeof value === 'object' ? JSON.stringify(value) : value}`
-          ).join(', ');
-          console.log(`      ${index + 1}. ${rowStr}`);
-        });
-      }
     }
     
-    // Summary
-    console.log('\n📈 MIGRATION SUMMARY:');
-    console.log('=' * 40);
-    console.log(`✅ Successfully migrated tables: ${commonTables.length}`);
-    console.log(`📊 Total data migrated:`);
-    
-    let totalLocalRows = 0;
-    let totalRemoteRows = 0;
-    
-    for (const tableName of commonTables) {
-      const localCountResult = await localClient.query(`SELECT COUNT(*) FROM ${tableName}`);
-      const remoteCountResult = await remoteClient.query(`SELECT COUNT(*) FROM ${tableName}`);
-      
-      const localCount = parseInt(localCountResult.rows[0].count);
-      const remoteCount = parseInt(remoteCountResult.rows[0].count);
-      
-      totalLocalRows += localCount;
-      totalRemoteRows += remoteCount;
-      
-      const status = localCount === remoteCount ? '✅' : '⚠️';
-      console.log(`  ${status} ${tableName}: ${localCount} → ${remoteCount} rows`);
-    }
-    
-    console.log(`\n📊 Total: ${totalLocalRows} → ${totalRemoteRows} rows`);
-    console.log(`🎯 Migration accuracy: ${((totalRemoteRows / totalLocalRows) * 100).toFixed(2)}%`);
-    
-    if (totalLocalRows === totalRemoteRows) {
-      console.log('🎉 Perfect migration! All data successfully transferred.');
-    } else {
-      console.log('⚠️  Some data discrepancies found. Check individual tables above.');
-    }
+    console.log('\n🎉 Database comparison completed!');
     
   } catch (error) {
     console.error('❌ Database comparison failed:', error.message);
-    console.error('Stack trace:', error.stack);
   } finally {
     await localClient.end();
     await remoteClient.end();

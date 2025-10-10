@@ -20,12 +20,12 @@ PORT=3001
 NODE_ENV=production
 
 # Database Configuration (Remote PostgreSQL)
-DB_HOST=vocabdb-ictxdwcqsq.tcp-proxy-2212.dcdeploy.cloud
-DB_PORT=30575
-DB_NAME=vocabdb-db
-DB_USER=VjIKfz
-DB_PASSWORD=)t=0rdZe^=
-DB_URL=postgresql://VjIKfz:)t=0rdZe^=@vocabdb-ictxdwcqsq.tcp-proxy-2212.dcdeploy.cloud:30575/vocabdb-db
+DB_HOST=your_remote_db_host
+DB_PORT=your_remote_db_port
+DB_NAME=your_remote_db_name
+DB_USER=your_remote_db_user
+DB_PASSWORD=your_remote_db_password
+DB_URL=postgresql://your_user:your_password@your_host:your_port/your_database
 
 # OpenAI API Configuration
 OPENAI_API_KEY=your_actual_openai_api_key_here
