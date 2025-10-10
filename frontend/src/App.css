@@ -1,0 +1,173 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f9fafb;
+  
+  /* Mobile optimizations */
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+button {
+  /* Mobile touch optimizations */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+input {
+  /* Mobile input optimizations */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+select {
+  /* Mobile select optimizations */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (max-width: 768px) {
+  main {
+    padding: 1rem !important;
+  }
+  
+  .App {
+    font-size: 14px;
+  }
+  
+  h1 {
+    font-size: 24px !important;
+  }
+  
+  h2 {
+    font-size: 18px !important;
+  }
+  
+  /* Mobile header adjustments */
+  header {
+    padding: 1.5rem !important;
+  }
+  
+  header h1 {
+    font-size: 2rem !important;
+    margin: 0 !important;
+  }
+  
+  header p {
+    font-size: 1rem !important;
+    margin: 0.5rem 0 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .App {
+    font-size: 13px;
+  }
+  
+  header {
+    padding: 1rem !important;
+  }
+  
+  header h1 {
+    font-size: 1.8rem !important;
+  }
+  
+  header p {
+    font-size: 0.9rem !important;
+  }
+  
+  h1 {
+    font-size: 20px !important;
+  }
+  
+  h2 {
+    font-size: 16px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  header h1 {
+    font-size: 1.6rem !important;
+  }
+  
+  header p {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Prevent zoom on double tap for buttons */
+  button, .game-button, .option-button, .submit-button, .next-button, .end-game-button, .retry-button {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  /* Allow text selection in inputs */
+  input, textarea, .spelling-input {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
+  
+  /* Improve touch scrolling */
+  .games-app, .game-container, .question-container {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+  }
+  
+  /* Prevent horizontal scroll */
+  body, html {
+    overflow-x: hidden;
+  }
+}

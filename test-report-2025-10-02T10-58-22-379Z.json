@@ -1,0 +1,108 @@
+{
+  "timestamp": "2025-10-02T10:58:22.380Z",
+  "summary": {
+    "total": 39,
+    "passed": 39,
+    "failed": 0,
+    "duration": 1212
+  },
+  "results": {
+    "passed": 39,
+    "failed": 0,
+    "errors": [],
+    "gameResults": {
+      "new-letter": {
+        "success": true,
+        "wordsAvailable": 66,
+        "tested": true
+      },
+      "old-letter": {
+        "success": true,
+        "wordsAvailable": 66,
+        "tested": true
+      },
+      "random-new": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "random-old": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "synonym-match": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "spelling": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "word-ladder": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "daily-quest": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "speed-round": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      }
+    }
+  },
+  "gameResults": {
+    "new-letter": {
+      "success": true,
+      "wordsAvailable": 66,
+      "tested": true
+    },
+    "old-letter": {
+      "success": true,
+      "wordsAvailable": 66,
+      "tested": true
+    },
+    "random-new": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "random-old": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "synonym-match": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "spelling": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "word-ladder": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "daily-quest": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "speed-round": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    }
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "timestamp": "2025-10-02T10:55:44.986Z",
+  "summary": {
+    "total": 37,
+    "passed": 32,
+    "failed": 5,
+    "duration": 1580
+  },
+  "results": {
+    "passed": 32,
+    "failed": 5,
+    "errors": [
+      {
+        "test": "Database Statistics",
+        "details": {
+          "success": false,
+          "error": "column \"correct_count\" does not exist"
+        }
+      },
+      {
+        "test": "New Letter Learning - Word Selection",
+        "details": "0 words available"
+      },
+      {
+        "test": "New Letter Learning - Game Playable",
+        "details": "No words available"
+      },
+      {
+        "test": "Review Letter Learning - Word Selection",
+        "details": "0 words available"
+      },
+      {
+        "test": "Review Letter Learning - Game Playable",
+        "details": "No words available"
+      }
+    ],
+    "gameResults": {
+      "random-new": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "random-old": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "synonym-match": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "spelling": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "word-ladder": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "daily-quest": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      },
+      "speed-round": {
+        "success": true,
+        "wordsAvailable": 10,
+        "tested": true
+      }
+    }
+  },
+  "gameResults": {
+    "random-new": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "random-old": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "synonym-match": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "spelling": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "word-ladder": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "daily-quest": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    },
+    "speed-round": {
+      "success": true,
+      "wordsAvailable": 10,
+      "tested": true
+    }
+  }
+}
