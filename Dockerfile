@@ -1,53 +1,103 @@
-# Frontend Dockerfile
-FROM node:16-alpine as build
+# Multi-stage Dockerfile for the entire application
+FROM node:18-alpine as base
+
+# Install system dependencies
+RUN apk add --no-cache python3 make g++
 
 # Set working directory
 WORKDIR /app
 
-# Copy only package.json first
-COPY frontend/package.json ./
+# Copy root package files for shared dependencies
+COPY package*.json ./
 
-# Show package.json for debugging
-RUN cat package.json
+# Frontend build stage
+FROM base as frontend-build
 
-# Show npm version for debugging
-RUN npm --version
+# Set working directory for frontend
+WORKDIR /app/frontend
 
-# Clear npm cache and install dependencies with error handling
-RUN npm cache clean --force || true
-RUN npm install --verbose --no-optional --legacy-peer-deps
+# Copy frontend package files
+COPY frontend/package*.json ./
+
+# Install frontend dependencies with optimizations
+RUN npm ci --only=production --silent --no-audit --no-fund
 
 # Copy frontend source code
 COPY frontend/ .
-
-# Show directory structure for debugging
-RUN ls -la
 
 # Set environment variables for React build
 ENV GENERATE_SOURCEMAP=false
 ENV CI=false
 ENV SKIP_PREFLIGHT_CHECK=true
 
-# Check TypeScript compilation first
-RUN npx tsc --noEmit --skipLibCheck || echo "TypeScript check completed with warnings"
+# Build the frontend application
+RUN npm run build
 
-# Build the application with verbose output
-RUN npm run build 2>&1 | tee build.log || (echo "Build failed, showing build log:" && cat build.log && exit 1)
+# Backend build stage
+FROM base as backend-build
 
-# Clean up dev dependencies to reduce image size
-RUN npm prune --production
+# Set working directory for backend
+WORKDIR /app/backend
 
-# Production stage
-FROM nginx:alpine
+# Copy backend package files
+COPY backend/package*.json ./
 
-# Copy built files from build stage
-COPY --from=build /app/build /usr/share/nginx/html
+# Install backend dependencies
+RUN npm ci --only=production --silent --no-audit --no-fund
+
+# Copy backend source code
+COPY backend/ .
+
+# Build TypeScript
+RUN npm run build
+
+# Production stage for frontend
+FROM nginx:alpine as frontend-prod
+
+# Copy built files from frontend build stage
+COPY --from=frontend-build /app/frontend/build /usr/share/nginx/html
 
 # Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY frontend/nginx.conf /etc/nginx/nginx.conf
 
 # Expose port
 EXPOSE 80
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+# Production stage for backend
+FROM node:18-alpine as backend-prod
+
+# Install system dependencies
+RUN apk add --no-cache python3 make g++
+
+# Set working directory
+WORKDIR /app
+
+# Copy backend package files
+COPY backend/package*.json ./
+
+# Install only production dependencies
+RUN npm ci --only=production --silent --no-audit --no-fund
+
+# Copy built backend from build stage
+COPY --from=backend-build /app/backend/dist ./dist
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Change ownership of the app directory
+RUN chown -R nodejs:nodejs /app
+USER nodejs
+
+# Expose port
+EXPOSE 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3001/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+
+# Start the application
+CMD ["node", "dist/index.js"]
