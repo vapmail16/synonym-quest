@@ -74,6 +74,9 @@ jspm_packages/
 *.sqlite
 *.db
 
+# Database backup files (exclude entire folder)
+database-backups/
+
 # Temporary files
 tmp/
 temp/
