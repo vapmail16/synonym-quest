@@ -19,6 +19,9 @@ RUN npm run build
 # Debug: List build directory contents
 RUN ls -la /app/build
 
+# Debug: Check if index.html exists
+RUN test -f /app/build/index.html && echo "index.html exists" || echo "index.html missing"
+
 # Production stage
 FROM nginx:alpine
 
@@ -33,6 +36,10 @@ RUN ls -la /usr/share/nginx/html
 
 # Expose port
 EXPOSE 80
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
