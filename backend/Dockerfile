@@ -11,7 +11,8 @@ RUN apk add --no-cache python3 make g++
 COPY package*.json ./
 
 # Install ALL dependencies (including dev dependencies for build)
-RUN npm ci
+# Use npm install instead of npm ci for better compatibility
+RUN npm install --no-audit --no-fund
 
 # Copy source code
 COPY . .
@@ -32,7 +33,7 @@ RUN apk add --no-cache python3 make g++
 COPY package*.json ./
 
 # Install ONLY production dependencies
-RUN npm ci --only=production
+RUN npm install --only=production --no-audit --no-fund
 
 # Copy built application from build stage
 COPY --from=build /app/dist ./dist
