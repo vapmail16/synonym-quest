@@ -1,32 +1,32 @@
-# Build stage
-FROM node:22 AS build
+# Frontend Dockerfile
+FROM node:18-alpine as build
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
 # Copy package files
-COPY package.json* ./
+COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci --only=production
 
 # Copy source code
 COPY . .
 
 # Build the application
-RUN npm run build || echo "No build script found"
+RUN npm run build
 
 # Production stage
-FROM joseluisq/static-web-server:2
+FROM nginx:alpine
 
-# Set the working directory
-WORKDIR /app
+# Copy built files from build stage
+COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy the built app
-COPY --from=build /app/build ./build
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port
-EXPOSE 3000
+EXPOSE 80
 
-# Start the application with SPA support and caching
-CMD ["/static-web-server", "--root", "build", "--port", "3000", "--page-fallback", "build/index.html"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
