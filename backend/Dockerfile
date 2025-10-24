@@ -1,41 +1,41 @@
-# Backend Dockerfile
-FROM node:18-alpine
+# Build stage
+FROM node:22 AS build
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Install dependencies for native modules
-RUN apk add --no-cache python3 make g++
-
 # Copy package files
-COPY package*.json ./
+COPY package.json* ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install all dependencies (including dev dependencies for build)
+RUN npm install
 
 # Copy source code
 COPY . .
 
-# Build TypeScript
-RUN npm run build
+# Build the application
+RUN npm run build || echo "No build script found"
 
-# Remove dev dependencies and source files
-RUN npm prune --production && rm -rf src tsconfig.json
+# Production stage
+FROM node:22-alpine
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+# Set the working directory
+WORKDIR /app
 
-# Change ownership of the app directory
-RUN chown -R nodejs:nodejs /app
-USER nodejs
+# Copy package files
+COPY package.json* ./
 
-# Expose port
-EXPOSE 3001
+# Install only production dependencies
+RUN npm install --only=production
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3001/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+# Copy built application from build stage
+COPY --from=build /app/dist ./dist
 
-# Start the application
-CMD ["node", "dist/index.js"]
+# Copy other necessary files
+COPY --from=build /app/package.json ./
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Define the command to run the application
+CMD ["npm", "start"]
