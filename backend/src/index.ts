@@ -74,18 +74,31 @@ app.get('/api/games/statistics', async (req, res) => {
 app.get('/api/games/letter/:letter/new', async (req, res) => {
   try {
     const { letter } = req.params;
-    const { limit = '5' } = req.query;
+    const { limit = '5', exclude = '' } = req.query;
     const { Word } = require('./models');
     const { Op } = require('sequelize');
     
-    const words = await Word.findAll({
-      where: {
-        word: {
-          [Op.like]: `${letter.toLowerCase()}%`
-        },
-        correctCount: 0,
-        incorrectCount: 0
+    // Parse excluded words (words already shown in current session)
+    const excludedWords = exclude ? (exclude as string).split(',').filter(w => w.trim()) : [];
+    
+    const whereClause: any = {
+      word: {
+        [Op.like]: `${letter.toLowerCase()}%`
       },
+      correctCount: 0,
+      incorrectCount: 0
+    };
+    
+    // Exclude words that have been shown recently
+    if (excludedWords.length > 0) {
+      whereClause.word = {
+        [Op.like]: `${letter.toLowerCase()}%`,
+        [Op.notIn]: excludedWords
+      };
+    }
+    
+    const words = await Word.findAll({
+      where: whereClause,
       order: [['difficulty', 'ASC'], ['word', 'ASC']],
       limit: parseInt(limit as string)
     });

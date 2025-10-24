@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { wordService } from '../services/WordService';
-import { CreateWordRequest, UpdateWordRequest, SearchFilters } from '../../../shared/types';
+import { CreateWordRequest, UpdateWordRequest, SearchFilters } from '../types';
 import { authenticate } from '../middleware/auth';
 
 export class WordController {

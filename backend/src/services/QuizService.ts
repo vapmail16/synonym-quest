@@ -8,7 +8,7 @@ import {
   GameSettings,
   Word,
   QuizAnswer
-} from '../../../shared/types';
+} from '../types';
 
 export class QuizService {
   /**

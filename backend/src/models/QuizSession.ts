@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { QuizSession } from '../../../shared/types';
+import { QuizSession } from '../types';
 
 export class QuizSessionModel extends Model<QuizSession> implements QuizSession {
   public id!: string;

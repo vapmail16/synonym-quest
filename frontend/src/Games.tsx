@@ -342,9 +342,9 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     if (timeLeft !== null && timeLeft > 0 && gameStarted) {
       timer = window.setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
     } else if (timeLeft === 0 && gameStarted) {
-      // Don't immediately end game - let user see final results
-      // The timer will show 0:00 and user can manually end game
-      setGameStarted(false);
+      // Time's up! End the game automatically
+      console.log('⏰ Time\'s up! Ending game automatically');
+      endGame();
     }
     
     return () => {
@@ -578,6 +578,35 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         } catch (error) {
           console.warn(`Error loading user-specific words for ${gameType}:`, error);
         }
+      } else if (!user && (gameType === 'new-letter' || gameType === 'old-letter')) {
+        // For non-authenticated users, use the public API with exclusion
+        try {
+          const excludedWords = Array.from(playedWordsInSession).join(',');
+          const endpoint = gameType === 'new-letter' 
+            ? `http://localhost:3001/api/games/letter/${selectedLetter.toLowerCase()}/new?exclude=${excludedWords}`
+            : `http://localhost:3001/api/games/letter/${selectedLetter.toLowerCase()}/old?exclude=${excludedWords}`;
+          
+          const response = await fetch(endpoint);
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.data && data.data.words && data.data.words.length > 0) {
+              filteredWords = data.data.words.map((w: any) => ({
+                id: w.id,
+                word: w.word,
+                synonyms: w.synonyms,
+                difficulty: w.difficulty,
+                correctCount: w.correctCount || 0,
+                incorrectCount: w.incorrectCount || 0
+              }));
+              console.log(`✅ Loaded ${filteredWords.length} public ${gameType} words (excluding: ${excludedWords})`);
+            }
+          } else {
+            console.warn(`Failed to load public words for ${gameType}:`, response.status);
+          }
+        } catch (error) {
+          console.warn(`Error loading public words for ${gameType}:`, error);
+        }
       }
       
       if (filteredWords.length === 0) {
@@ -758,7 +787,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         spellingTimerRef.current = null;
       }
     };
-  }, [currentGame, currentQuestion?.questionWord?.word]); // Only depend on the word, not showSpellingWord
+  }, [currentGame, currentQuestion, showSpellingWord]); // Include all dependencies
 
   const startGame = async (gameType: GameType) => {
     // Prevent multiple rapid game starts
@@ -858,6 +887,9 @@ const Games: React.FC<GamesProps> = ({ user }) => {
       }
       
       setShowResult(true);
+      
+      // Add word to played words in session to avoid repetition
+      setPlayedWordsInSession(prev => new Set([...Array.from(prev), currentQuestion.questionWord.id]));
       
       // Update word progress in database (async, don't wait for it)
       updateWordProgress(currentQuestion.questionWord.id, isCorrect);

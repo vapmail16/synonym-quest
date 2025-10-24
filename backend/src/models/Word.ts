@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import { Word } from '../../../shared/types';
+import { Word } from '../types';
 
 export class WordModel extends Model<Word> implements Word {
   public id!: string;

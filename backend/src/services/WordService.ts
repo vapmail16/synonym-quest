@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import { WordModel } from '../models/Word';
 import { UserProgress } from '../models';
-import { Word, CreateWordRequest, UpdateWordRequest, SearchFilters, PaginatedResponse } from '../../../shared/types';
+import { Word, CreateWordRequest, UpdateWordRequest, SearchFilters, PaginatedResponse } from '../types';
 import { openAIService } from './OpenAIService';
 
 export class WordService {

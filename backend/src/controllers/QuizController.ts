@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { quizService } from '../services/QuizService';
-import { GameSettings } from '../../../shared/types';
+import { GameSettings } from '../types';
 
 export class QuizController {
   public getRouter(): Router {

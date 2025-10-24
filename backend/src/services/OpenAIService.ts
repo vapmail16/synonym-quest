@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { AISuggestionRequest, AIValidationRequest, AIValidationResponse } from '../../../shared/types';
+import { AISuggestionRequest, AIValidationRequest, AIValidationResponse } from '../types';
 
 export class OpenAIService {
   private client: OpenAI;

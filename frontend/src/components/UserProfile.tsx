@@ -18,11 +18,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ onLogout }) => {
 
   const handleLogout = async () => {
     setLoading(true);
+    setError(null); // Clear any previous errors
     try {
       await authService.logout();
       onLogout();
     } catch (error) {
       console.error('Logout error:', error);
+      setError('Failed to logout. Please try again.');
     } finally {
       setLoading(false);
     }

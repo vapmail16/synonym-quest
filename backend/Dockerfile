@@ -1,5 +1,5 @@
-# Backend Dockerfile
-FROM node:18-alpine
+# Backend Dockerfile - Multi-stage build
+FROM node:18-alpine as build
 
 # Set working directory
 WORKDIR /app
@@ -10,8 +10,8 @@ RUN apk add --no-cache python3 make g++
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including dev dependencies for build)
+RUN npm ci
 
 # Copy source code
 COPY . .
@@ -19,8 +19,23 @@ COPY . .
 # Build TypeScript
 RUN npm run build
 
-# Remove dev dependencies and source files
-RUN npm prune --production && rm -rf src tsconfig.json
+# Production stage
+FROM node:18-alpine as production
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies for native modules
+RUN apk add --no-cache python3 make g++
+
+# Copy package files
+COPY package*.json ./
+
+# Install ONLY production dependencies
+RUN npm ci --only=production
+
+# Copy built application from build stage
+COPY --from=build /app/dist ./dist
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \

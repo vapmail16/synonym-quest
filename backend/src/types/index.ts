@@ -1,4 +1,4 @@
-// Shared TypeScript interfaces for Synonym Quest
+// Backend TypeScript interfaces for Synonym Quest
 
 export interface Word {
   id: string;

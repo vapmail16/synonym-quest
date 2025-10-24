@@ -2,7 +2,7 @@ import { WordModel } from '../models/Word';
 import { GameProgressModel } from '../models/GameProgress';
 import { UserProgress } from '../models';
 import { DailyQuestModel } from '../models/DailyQuest';
-import { Word } from '../../../shared/types';
+import { Word } from '../types';
 import { Op } from 'sequelize';
 import { sequelize } from '../config/database';
 
