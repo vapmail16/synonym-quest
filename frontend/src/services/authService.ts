@@ -3,6 +3,8 @@
  * Handles user login, registration, and token management
  */
 
+import config from '../config/api';
+
 export interface User {
   id: string;
   username: string;
@@ -50,7 +52,6 @@ export interface AuthResponse {
 }
 
 class AuthService {
-  private baseUrl = 'http://localhost:3001/api/auth';
   private tokenKey = 'auth_token';
   private refreshTokenKey = 'refresh_token';
   private userKey = 'current_user';
@@ -60,7 +61,7 @@ class AuthService {
    */
   async register(data: RegisterData): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/register`, {
+      const response = await fetch(config.AUTH_ENDPOINTS.REGISTER, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +92,7 @@ class AuthService {
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/login`, {
+      const response = await fetch(config.AUTH_ENDPOINTS.LOGIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +128,7 @@ class AuthService {
         return false;
       }
 
-      const response = await fetch(`${this.baseUrl}/refresh-token`, {
+      const response = await fetch(config.AUTH_ENDPOINTS.REFRESH_TOKEN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +160,7 @@ class AuthService {
         return null;
       }
 
-      const response = await fetch(`${this.baseUrl}/profile`, {
+      const response = await fetch(config.AUTH_ENDPOINTS.PROFILE, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -196,7 +197,7 @@ class AuthService {
         };
       }
 
-      const response = await fetch(`${this.baseUrl}/profile`, {
+      const response = await fetch(config.AUTH_ENDPOINTS.PROFILE, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -228,7 +229,7 @@ class AuthService {
     try {
       const token = this.getToken();
       if (token) {
-        await fetch(`${this.baseUrl}/logout`, {
+        await fetch(config.AUTH_ENDPOINTS.LOGOUT, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,

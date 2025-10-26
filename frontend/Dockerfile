@@ -5,6 +5,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+# Build argument for API URL
+ARG REACT_APP_API_URL=https://backend-ictxdwcqsq.dcdeploy.cloud
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 RUN npm run build
 
 # Use a simple http server instead of nginx

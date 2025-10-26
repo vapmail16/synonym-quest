@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import authService from './services/authService';
+import config from './config/api';
 
 interface Word {
   id: string;
@@ -89,7 +90,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     if (!user) return;
     
     try {
-          const response = await fetch('http://localhost:3001/api/games/user/letters/progress', {
+          const response = await fetch(config.GAME_ENDPOINTS.USER_LETTERS_PROGRESS, {
             headers: {
               'Authorization': `Bearer ${authService.getToken()}`
             }
@@ -128,12 +129,12 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         // User-specific data loading
         const token = authService.getToken();
         const [wordsResponse, statsResponse] = await Promise.all([
-          fetch('http://localhost:3001/api/words?limit=2000', {
+          fetch(config.WORD_ENDPOINTS.GET_ALL(2000), {
             headers: {
               'Authorization': `Bearer ${token}`
             }
           }),
-          fetch('http://localhost:3001/api/words/user/stats', {
+          fetch(config.WORD_ENDPOINTS.USER_STATS, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -173,7 +174,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         };
       } else {
         // Anonymous user - fallback to global data
-        const response = await fetch('http://localhost:3001/api/words?limit=2000');
+        const response = await fetch(config.WORD_ENDPOINTS.GET_ALL(2000));
       
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -518,7 +519,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
           // Try to reload words
           await loadWordsAndStats();
           // Check the updated state after reload
-          const updatedWords = await fetch('http://localhost:3001/api/words?limit=2000')
+          const updatedWords = await fetch(config.WORD_ENDPOINTS.GET_ALL(2000))
             .then(res => res.json())
             .then(data => data.success ? (data.data.data || data.data) : [])
             .catch(() => []);
@@ -541,13 +542,13 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         try {
           let endpoint = '';
           if (gameType === 'new-letter') {
-            endpoint = `http://localhost:3001/api/games/user/letter/${selectedLetter.toLowerCase()}/new`;
+            endpoint = config.GAME_ENDPOINTS.USER_LETTER_NEW(selectedLetter.toLowerCase());
           } else if (gameType === 'old-letter') {
-            endpoint = `http://localhost:3001/api/games/user/letter/${selectedLetter.toLowerCase()}/old`;
+            endpoint = config.GAME_ENDPOINTS.USER_LETTER_OLD(selectedLetter.toLowerCase());
           } else if (gameType === 'random-new') {
-            endpoint = `http://localhost:3001/api/words/user/new`;
+            endpoint = config.WORD_ENDPOINTS.USER_NEW;
           } else if (gameType === 'random-old') {
-            endpoint = `http://localhost:3001/api/words/user/learned`;
+            endpoint = config.WORD_ENDPOINTS.USER_LEARNED;
           }
           
           if (endpoint) {
@@ -583,8 +584,8 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         try {
           const excludedWords = Array.from(playedWordsInSession).join(',');
           const endpoint = gameType === 'new-letter' 
-            ? `http://localhost:3001/api/games/letter/${selectedLetter.toLowerCase()}/new?exclude=${excludedWords}`
-            : `http://localhost:3001/api/games/letter/${selectedLetter.toLowerCase()}/old?exclude=${excludedWords}`;
+            ? config.GAME_ENDPOINTS.LETTER_NEW(selectedLetter.toLowerCase(), excludedWords)
+            : config.GAME_ENDPOINTS.LETTER_OLD(selectedLetter.toLowerCase(), excludedWords);
           
           const response = await fetch(endpoint);
           
@@ -903,7 +904,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     try {
       if (user) {
         // User-specific progress tracking - use the correct endpoint
-        const response = await fetch('http://localhost:3001/api/games/user/progress/update', {
+        const response = await fetch(config.GAME_ENDPOINTS.USER_PROGRESS_UPDATE, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -923,7 +924,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
           // Reload user stats and letter progress
           console.log('🔄 Reloading user stats and letter progress...');
           const [statsResponse] = await Promise.all([
-            fetch('http://localhost:3001/api/words/user/stats', {
+            fetch(config.WORD_ENDPOINTS.USER_STATS, {
               headers: {
                 'Authorization': `Bearer ${authService.getToken()}`
               }
@@ -953,7 +954,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         }
       } else {
         // Anonymous user - fallback to global progress
-        const response = await fetch(`http://localhost:3001/api/words/${wordId}/stats`, {
+        const response = await fetch(config.WORD_ENDPOINTS.WORD_STATS(wordId), {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
