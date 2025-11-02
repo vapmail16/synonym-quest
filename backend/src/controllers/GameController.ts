@@ -407,7 +407,7 @@ export class GameController {
     try {
       const userId = (req as any).user.id;
       const { letter } = req.params;
-      const { limit = 10 } = req.query;
+      const { limit = 200 } = req.query; // High default to support all words per letter
       const words = await gameService.getUserNewWordsForLetter(userId, letter, parseInt(limit as string));
       
       res.json({
@@ -429,7 +429,7 @@ export class GameController {
     try {
       const userId = (req as any).user.id;
       const { letter } = req.params;
-      const { limit = 10 } = req.query;
+      const { limit = 200 } = req.query; // High default to support all words per letter
       const words = await gameService.getUserLearnedWordsForLetter(userId, letter, parseInt(limit as string));
       
       res.json({
@@ -482,6 +482,29 @@ export class GameController {
       res.status(500).json({
         success: false,
         error: error.message || 'Failed to fetch user random learned words'
+      });
+    }
+  }
+
+  /**
+   * Get user's learned words for a specific game type (review mode)
+   */
+  async getUserLearnedWordsForGameType(req: Request, res: Response): Promise<void> {
+    try {
+      const userId = (req as any).user.id;
+      const { gameType } = req.params;
+      const { limit = 200 } = req.query;
+      
+      const words = await gameService.getUserLearnedWordsForGameType(userId, gameType, parseInt(limit as string));
+      
+      res.json({
+        success: true,
+        data: words
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to fetch learned words for game type'
       });
     }
   }
@@ -552,6 +575,7 @@ export class GameController {
     router.get('/user/letter/:letter/old', authenticate, this.getUserLearnedWordsForLetter.bind(this));
     router.get('/user/random/new', authenticate, this.getUserRandomNewWords.bind(this));
     router.get('/user/random/old', authenticate, this.getUserRandomLearnedWords.bind(this));
+    router.get('/user/review/:gameType', authenticate, this.getUserLearnedWordsForGameType.bind(this));
     router.post('/user/progress/update', authenticate, this.updateUserGameProgress.bind(this));
 
     return router;

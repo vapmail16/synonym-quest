@@ -25,6 +25,8 @@ export const config = {
       `${API_URL}/api/games/user/letter/${letter}/new`,
     USER_LETTER_OLD: (letter: string) => 
       `${API_URL}/api/games/user/letter/${letter}/old`,
+    USER_REVIEW_GAME: (gameType: string) => 
+      `${API_URL}/api/games/user/review/${gameType}`,
   },
   WORD_ENDPOINTS: {
     GET_ALL: (limit?: number) => 

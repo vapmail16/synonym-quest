@@ -166,6 +166,23 @@
   background: linear-gradient(135deg, #F44336, #D32F2F);
 }
 
+/* Review game buttons - slightly different gradient */
+.game-button.synonym-match-review {
+  background: linear-gradient(135deg, #AD1457, #880E4F);
+}
+
+.game-button.spelling-review {
+  background: linear-gradient(135deg, #BF360C, #8E0000);
+}
+
+.game-button.word-ladder-review {
+  background: linear-gradient(135deg, #5D4037, #3E2723);
+}
+
+.game-button.speed-round-review {
+  background: linear-gradient(135deg, #B71C1C, #7F0000);
+}
+
 .game-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);

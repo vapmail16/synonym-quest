@@ -604,10 +604,13 @@ export class GameService {
 
   /**
    * Get user's new words for a specific letter
+   * Returns words that are unplayed OR have masteryLevel < 2
+   * Handles the case where user has no progress yet for this letter
    */
   async getUserNewWordsForLetter(userId: string, letter: string, limit: number = 10): Promise<any[]> {
     try {
-      return await UserProgress.findAll({
+      // Step 1: Get words the user has already tried (with progress)
+      const progressWords = await UserProgress.findAll({
         where: {
           userId,
           masteryLevel: { [Op.lt]: 2 }
@@ -621,8 +624,49 @@ export class GameService {
           required: true
         }],
         order: [['masteryLevel', 'ASC'], ['lastPlayedAt', 'ASC']],
-        limit
       });
+
+      // Step 2: Get ALL words for this letter
+      const allWords = await WordModel.findAll({
+        where: {
+          word: { [Op.like]: `${letter.toLowerCase()}%` }
+        },
+        order: [['difficulty', 'ASC'], ['word', 'ASC']]
+      });
+
+      // Step 3: If we have less than limit from progress, add unplayed words
+      const playedWordIds = new Set(progressWords.map(p => p.wordId));
+      
+      if (progressWords.length < limit) {
+        // Get unplayed words (not in UserProgress)
+        const unplayedWords = allWords.filter(w => !playedWordIds.has(w.id));
+        
+        // Add unplayed words to reach the limit
+        const needed = limit - progressWords.length;
+        const additionalWords = unplayedWords.slice(0, needed);
+        
+        // Convert unplayed words to same format as progress words
+        const additionalProgressFormat = additionalWords.map(word => ({
+          id: `temp-${word.id}`,
+          userId,
+          wordId: word.id,
+          gameType: 'new-letter',
+          correctCount: 0,
+          incorrectCount: 0,
+          lastPlayedAt: new Date(),
+          masteryLevel: 0,
+          streak: 0,
+          totalTimeSpent: 0,
+          word: word,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }));
+        
+        return [...progressWords, ...additionalProgressFormat].slice(0, limit);
+      }
+      
+      // Return only progress words if we have enough
+      return progressWords.slice(0, limit);
     } catch (error) {
       console.error('Error getting user new words for letter:', error);
       throw error;
@@ -658,10 +702,12 @@ export class GameService {
 
   /**
    * Get user's random new words
+   * Returns words that are unplayed OR have masteryLevel < 2
    */
   async getUserRandomNewWords(userId: string, limit: number = 10): Promise<any[]> {
     try {
-      return await UserProgress.findAll({
+      // Step 1: Get words the user has already tried (with progress)
+      const progressWords = await UserProgress.findAll({
         where: {
           userId,
           masteryLevel: { [Op.lt]: 2 }
@@ -672,8 +718,49 @@ export class GameService {
           required: true
         }],
         order: [['masteryLevel', 'ASC'], ['lastPlayedAt', 'ASC']],
-        limit
       });
+
+      // Step 2: Get ALL words
+      const allWords = await WordModel.findAll({
+        order: [['difficulty', 'ASC'], ['word', 'ASC']]
+      });
+
+      // Step 3: If we have less than limit from progress, add unplayed words
+      const playedWordIds = new Set(progressWords.map(p => p.wordId));
+      
+      if (progressWords.length < limit) {
+        // Get unplayed words (not in UserProgress)
+        const unplayedWords = allWords.filter(w => !playedWordIds.has(w.id));
+        
+        // Shuffle for randomness
+        const shuffledUnplayed = unplayedWords.sort(() => Math.random() - 0.5);
+        
+        // Add unplayed words to reach the limit
+        const needed = limit - progressWords.length;
+        const additionalWords = shuffledUnplayed.slice(0, needed);
+        
+        // Convert unplayed words to same format as progress words
+        const additionalProgressFormat = additionalWords.map(word => ({
+          id: `temp-${word.id}`,
+          userId,
+          wordId: word.id,
+          gameType: 'random-new',
+          correctCount: 0,
+          incorrectCount: 0,
+          lastPlayedAt: new Date(),
+          masteryLevel: 0,
+          streak: 0,
+          totalTimeSpent: 0,
+          word: word,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }));
+        
+        return [...progressWords, ...additionalProgressFormat].slice(0, limit);
+      }
+      
+      // Return only progress words if we have enough
+      return progressWords.slice(0, limit);
     } catch (error) {
       console.error('Error getting user random new words:', error);
       throw error;
@@ -700,6 +787,34 @@ export class GameService {
       });
     } catch (error) {
       console.error('Error getting user random learned words:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get user's learned words for a specific game type (for review modes)
+   */
+  async getUserLearnedWordsForGameType(userId: string, gameType: string, limit: number = 200): Promise<any[]> {
+    try {
+      // Extract base game type from review game type (e.g., 'synonym-match-review' -> 'synonym-match')
+      const baseGameType = gameType.replace('-review', '');
+      
+      return await UserProgress.findAll({
+        where: {
+          userId,
+          gameType: baseGameType,
+          masteryLevel: { [Op.gte]: 2 }
+        },
+        include: [{
+          model: WordModel,
+          as: 'word',
+          required: true
+        }],
+        order: [['masteryLevel', 'ASC'], ['lastPlayedAt', 'ASC']],
+        limit
+      });
+    } catch (error) {
+      console.error('Error getting user learned words for game type:', error);
       throw error;
     }
   }

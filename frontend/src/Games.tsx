@@ -34,10 +34,14 @@ type GameType =
   | 'random-new' 
   | 'random-old' 
   | 'synonym-match' 
+  | 'synonym-match-review'
   | 'spelling' 
+  | 'spelling-review'
   | 'word-ladder' 
+  | 'word-ladder-review'
   | 'daily-quest' 
-  | 'speed-round';
+  | 'speed-round'
+  | 'speed-round-review';
 
 
 interface GamesProps {
@@ -490,6 +494,13 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         // All words for skill and time-based games
         filteredWords = [...allWords];
         break;
+      case 'synonym-match-review':
+      case 'spelling-review':
+      case 'word-ladder-review':
+      case 'speed-round-review':
+        // Review modes: use all words for now (will be filtered by backend)
+        filteredWords = [...allWords];
+        break;
       default:
         // All words for unknown game types
         filteredWords = [...allWords];
@@ -578,6 +589,34 @@ const Games: React.FC<GamesProps> = ({ user }) => {
           }
         } catch (error) {
           console.warn(`Error loading user-specific words for ${gameType}:`, error);
+        }
+      } else if (user && (gameType === 'synonym-match-review' || gameType === 'spelling-review' || gameType === 'word-ladder-review' || gameType === 'speed-round-review')) {
+        // For review games, fetch learned words from the original game type
+        try {
+          const response = await fetch(config.GAME_ENDPOINTS.USER_REVIEW_GAME(gameType), {
+            headers: {
+              'Authorization': `Bearer ${authService.getToken()}`
+            }
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.data && data.data.length > 0) {
+              filteredWords = data.data.map((item: any) => ({
+                id: item.word?.id || item.id,
+                word: item.word?.word || item.word,
+                synonyms: item.word?.synonyms || item.synonyms,
+                difficulty: item.word?.difficulty || item.difficulty,
+                correctCount: 0,
+                incorrectCount: 0
+              }));
+              console.log(`✅ Loaded ${filteredWords.length} user-specific ${gameType} words`);
+            }
+          } else {
+            console.warn(`Failed to load user-specific review words for ${gameType}:`, response.status);
+          }
+        } catch (error) {
+          console.warn(`Error loading user-specific review words for ${gameType}:`, error);
         }
       } else if (!user && (gameType === 'new-letter' || gameType === 'old-letter')) {
         // For non-authenticated users, use the public API with exclusion
@@ -912,7 +951,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
           },
           body: JSON.stringify({
             wordId: wordId,
-            gameType: currentGame || 'unknown',
+            gameType: (currentGame || 'unknown').replace('-review', ''), // Remove '-review' suffix for tracking
             isCorrect: isCorrect,
             timeSpent: 0
           })
@@ -1176,16 +1215,34 @@ const Games: React.FC<GamesProps> = ({ user }) => {
             🎯 Synonym Match
           </button>
           <button 
+            className="game-button synonym-match-review"
+            onClick={() => startGame('synonym-match-review')}
+          >
+            📖 Review Synonym Match
+          </button>
+          <button 
             className="game-button spelling"
             onClick={() => startGame('spelling')}
           >
             ✏️ Spelling Challenge
           </button>
           <button 
+            className="game-button spelling-review"
+            onClick={() => startGame('spelling-review')}
+          >
+            📖 Review Spelling
+          </button>
+          <button 
             className="game-button word-ladder"
             onClick={() => startGame('word-ladder')}
           >
             🪜 Word Ladder
+          </button>
+          <button 
+            className="game-button word-ladder-review"
+            onClick={() => startGame('word-ladder-review')}
+          >
+            📖 Review Word Ladder
           </button>
         </div>
 
@@ -1203,6 +1260,12 @@ const Games: React.FC<GamesProps> = ({ user }) => {
             onClick={() => startGame('speed-round')}
           >
             ⚡ Speed Round (1min)
+          </button>
+          <button 
+            className="game-button speed-round-review"
+            onClick={() => startGame('speed-round-review')}
+          >
+            📖 Review Speed Round
           </button>
         </div>
       </div>
@@ -1228,7 +1291,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
           <div className="game-stats-inline">
             <span>Score: {score}</span>
             <span>Streak: {streak}</span>
-            {currentGame === 'word-ladder' ? (
+            {(currentGame === 'word-ladder' || currentGame === 'word-ladder-review') ? (
               <span>Step: {Math.max(1, wordLadderStep + 1)}</span>
             ) : (
               <span>Questions: {questionsAnswered}</span>
@@ -1258,7 +1321,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
           </div>
         ) : (
           <div className="question-container">
-            {currentGame !== 'spelling' && (
+            {currentGame !== 'spelling' && currentGame !== 'spelling-review' && (
               <div className="question-word">
                 <h3>{currentQuestion.questionWord.word}</h3>
                 <span className={`difficulty ${currentQuestion.difficulty}`}>
@@ -1267,8 +1330,9 @@ const Games: React.FC<GamesProps> = ({ user }) => {
               </div>
             )}
 
-            {currentGame === 'synonym-match' && (
+            {(currentGame === 'synonym-match' || currentGame === 'synonym-match-review') && (
               <div className="question-text">
+                {currentGame === 'synonym-match-review' && <div style={{ marginBottom: '10px', color: '#666' }}>📖 Review Mode</div>}
                 What is a synonym for "<strong>{currentQuestion.questionWord.word}</strong>"?
               </div>
             )}
@@ -1291,9 +1355,9 @@ const Games: React.FC<GamesProps> = ({ user }) => {
               </div>
             )}
 
-            {currentGame === 'word-ladder' && (
+            {(currentGame === 'word-ladder' || currentGame === 'word-ladder-review') && (
               <div className="question-text">
-                <div style={{ marginBottom: '10px' }}>🪜 Word Ladder - Step {Math.max(1, wordLadderStep + 1)}</div>
+                <div style={{ marginBottom: '10px' }}>🪜 Word Ladder {currentGame === 'word-ladder-review' ? '(Review)' : ''} - Step {Math.max(1, wordLadderStep + 1)}</div>
                 What is a synonym for "<strong>{currentQuestion?.questionWord?.word || 'Loading...'}</strong>"?
                 <div style={{ marginTop: '10px', fontSize: '0.9em', color: '#666' }}>
                   Correct answers climb the ladder! Wrong answers keep you on the same step.
@@ -1313,7 +1377,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
               </div>
             )}
 
-            {currentGame === 'spelling' && (
+            {(currentGame === 'spelling' || currentGame === 'spelling-review') && (
               <div className="question-text">
                 <div style={{ marginBottom: '20px' }}>
                   {showSpellingWord ? (
@@ -1355,7 +1419,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
               </div>
             )}
 
-            {(currentGame === 'synonym-match' || currentGame.includes('letter') || currentGame.includes('random') || currentGame === 'daily-quest' || currentGame === 'speed-round' || currentGame === 'word-ladder') && (
+            {(currentGame === 'synonym-match' || currentGame === 'synonym-match-review' || currentGame.includes('letter') || currentGame.includes('random') || currentGame === 'daily-quest' || currentGame === 'speed-round' || currentGame === 'speed-round-review' || currentGame === 'word-ladder' || currentGame === 'word-ladder-review') && (
               <div className="options">
                 {currentQuestion.options.map((option: string, index: number) => (
                   <button
@@ -1379,7 +1443,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
               </div>
             )}
 
-            {currentGame === 'spelling' && (
+            {(currentGame === 'spelling' || currentGame === 'spelling-review') && (
               <button 
                 className="submit-button"
                 onClick={() => handleAnswer(selectedAnswer)}
@@ -1415,10 +1479,14 @@ const Games: React.FC<GamesProps> = ({ user }) => {
       'random-new': 'Random New Words',
       'random-old': 'Random Review',
       'synonym-match': 'Synonym Match',
+      'synonym-match-review': 'Review Synonym Match',
       'spelling': 'Spelling Challenge',
+      'spelling-review': 'Review Spelling',
       'word-ladder': 'Word Ladder',
+      'word-ladder-review': 'Review Word Ladder',
       'daily-quest': 'Daily Quest',
-      'speed-round': 'Speed Round'
+      'speed-round': 'Speed Round',
+      'speed-round-review': 'Review Speed Round'
     };
     return titles[gameType] || 'Game';
   };

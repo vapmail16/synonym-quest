@@ -69,15 +69,10 @@ export class UserProgressModel extends Model<UserProgressAttributes, UserProgres
     const totalAttempts = progress.correctCount + progress.incorrectCount;
     const accuracy = totalAttempts > 0 ? progress.correctCount / totalAttempts : 0;
     
-    // More lenient mastery level calculation for better learning experience
-    if (progress.correctCount >= 2 && accuracy >= 0.8) {
-      progress.masteryLevel = Math.min(5, Math.max(4, progress.masteryLevel + 1));
-    } else if (progress.correctCount >= 2 && accuracy >= 0.6) {
-      progress.masteryLevel = Math.min(3, Math.max(2, progress.masteryLevel + 1));
-    } else if (progress.correctCount >= 1 && accuracy >= 0.5) {
-      progress.masteryLevel = Math.min(2, Math.max(1, progress.masteryLevel + 1));
-    } else if (accuracy < 0.3 && totalAttempts >= 2) {
-      progress.masteryLevel = Math.max(0, progress.masteryLevel - 1);
+    // Simple logic: ONE correct answer = learned (moves to review section)
+    if (progress.correctCount >= 1) {
+      // User got it correct at least once, so it's "learned"
+      progress.masteryLevel = 2;
     }
 
     progress.lastPlayedAt = new Date();
@@ -188,7 +183,7 @@ export const initUserProgressModel = (sequelize: Sequelize) => {
         type: DataTypes.STRING(50),
         allowNull: false,
         validate: {
-          isIn: [['new-letter', 'old-letter', 'random-new', 'random-old', 'synonym-match', 'spelling', 'word-ladder', 'daily-quest', 'speed-round']]
+          isIn: [['new-letter', 'old-letter', 'random-new', 'random-old', 'synonym-match', 'synonym-match-review', 'spelling', 'spelling-review', 'word-ladder', 'word-ladder-review', 'daily-quest', 'speed-round', 'speed-round-review']]
         }
       },
       correctCount: {
