@@ -611,6 +611,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                 incorrectCount: 0
               }));
               console.log(`✅ Loaded ${filteredWords.length} user-specific ${gameType} words`);
+              console.log(`📝 First few word IDs:`, filteredWords.slice(0, 5).map(w => w.id));
             }
           } else {
             console.warn(`Failed to load user-specific review words for ${gameType}:`, response.status);
@@ -695,6 +696,8 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         console.log('🔄 All words in this game mode have been played. Resetting session tracking.');
         wordsToSelectFrom = filteredWords;
       }
+      
+      console.log(`🎮 Game: ${gameType} | Total words: ${filteredWords.length} | Available: ${availableWords.length} | Played in session: ${playedWordsInSession.size}`);
       
       // Select a random word from available words
       const randomIndex = Math.floor(Math.random() * wordsToSelectFrom.length);

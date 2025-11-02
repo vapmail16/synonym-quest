@@ -803,7 +803,7 @@ export class GameService {
         where: {
           userId,
           gameType: baseGameType,
-          masteryLevel: { [Op.gte]: 2 }
+          correctCount: { [Op.gte]: 1 } // Learned if got correct at least once
         },
         include: [{
           model: WordModel,
