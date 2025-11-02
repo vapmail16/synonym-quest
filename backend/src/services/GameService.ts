@@ -569,11 +569,11 @@ export class GameService {
           }
         });
 
-        // Get learned words for this letter (masteryLevel >= 2)
+        // Get learned words for this letter (got correct at least once)
         const learnedWords = await UserProgress.count({
           where: {
             userId,
-            masteryLevel: { [Op.gte]: 2 }
+            correctCount: { [Op.gte]: 1 }
           },
           include: [{
             model: WordModel,
@@ -681,7 +681,7 @@ export class GameService {
       return await UserProgress.findAll({
         where: {
           userId,
-          masteryLevel: { [Op.gte]: 2 }
+          correctCount: { [Op.gte]: 1 } // Learned if got correct at least once
         },
         include: [{
           model: WordModel,
@@ -775,7 +775,7 @@ export class GameService {
       return await UserProgress.findAll({
         where: {
           userId,
-          masteryLevel: { [Op.gte]: 2 }
+          correctCount: { [Op.gte]: 1 } // Learned if got correct at least once
         },
         include: [{
           model: WordModel,

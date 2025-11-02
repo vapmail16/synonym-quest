@@ -327,14 +327,14 @@ export class WordService {
   }
 
   /**
-   * Get user's learned words (mastery level >= 3)
+   * Get user's learned words (got correct at least once)
    */
   async getUserLearnedWords(userId: string, limit: number = 100): Promise<any[]> {
     try {
       return await UserProgress.findAll({
         where: { 
           userId,
-          masteryLevel: { [Op.gte]: 3 }
+          correctCount: { [Op.gte]: 1 } // Learned if got correct at least once
         },
         order: [['lastPlayedAt', 'DESC']],
         limit,
@@ -390,7 +390,7 @@ export class WordService {
       if (gameType === 'new') {
         whereClause.masteryLevel = { [Op.lt]: 2 };
       } else {
-        whereClause.masteryLevel = { [Op.gte]: 2 };
+        whereClause.correctCount = { [Op.gte]: 1 }; // Learned if got correct at least once
       }
 
       return await UserProgress.findAll({

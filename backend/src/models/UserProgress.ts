@@ -95,7 +95,7 @@ export class UserProgressModel extends Model<UserProgressAttributes, UserProgres
       where: { userId }
     });
 
-    const totalWordsLearned = allProgress.filter(p => p.masteryLevel >= 2).length;
+    const totalWordsLearned = allProgress.filter(p => p.correctCount >= 1).length;
     const totalGamesPlayed = allProgress.reduce((sum, p) => sum + p.correctCount + p.incorrectCount, 0);
     
     const currentStreak = Math.max(...allProgress.map(p => p.streak), 0);
@@ -138,8 +138,8 @@ export class UserProgressModel extends Model<UserProgressAttributes, UserProgres
       // New words: mastery level 0 or 1
       whereClause.masteryLevel = { [Op.lte]: 1 };
     } else if (gameType.includes('old') || gameType.includes('review')) {
-      // Review words: mastery level 2 or higher
-      whereClause.masteryLevel = { [Op.gte]: 2 };
+      // Review words: got correct at least once
+      whereClause.correctCount = { [Op.gte]: 1 };
     }
 
     return await UserProgressModel.findAll({
