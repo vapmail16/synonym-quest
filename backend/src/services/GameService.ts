@@ -606,67 +606,101 @@ export class GameService {
    * Get user's new words for a specific letter
    * Returns words that are unplayed OR have masteryLevel < 2
    * Handles the case where user has no progress yet for this letter
+   * Improved to reduce repetition by randomizing and excluding recently shown words
    */
-  async getUserNewWordsForLetter(userId: string, letter: string, limit: number = 10): Promise<any[]> {
+  async getUserNewWordsForLetter(userId: string, letter: string, limit: number = 10, excludeWords: string[] = []): Promise<any[]> {
     try {
-      // Step 1: Get words the user has already tried (with progress)
+      // Step 1: Get ALL words for this letter (excluding recently shown ones)
+      const whereClause: any = {
+        word: { 
+          [Op.like]: `${letter.toLowerCase()}%`,
+          ...(excludeWords.length > 0 ? { [Op.notIn]: excludeWords } : {})
+        }
+      };
+      
+      const allWords = await WordModel.findAll({
+        where: whereClause,
+        order: [['difficulty', 'ASC'], ['word', 'ASC']]
+      });
+
+      // Step 2: Get words the user has already tried (with progress) - excluding recently shown
+      const progressWhere: any = {
+        userId,
+        masteryLevel: { [Op.lt]: 2 }
+      };
+      
       const progressWords = await UserProgress.findAll({
-        where: {
-          userId,
-          masteryLevel: { [Op.lt]: 2 }
-        },
+        where: progressWhere,
         include: [{
           model: WordModel,
           as: 'word',
           where: {
-            word: { [Op.like]: `${letter.toLowerCase()}%` }
+            word: { 
+              [Op.like]: `${letter.toLowerCase()}%`,
+              ...(excludeWords.length > 0 ? { [Op.notIn]: excludeWords } : {})
+            }
           },
           required: true
         }],
-        order: [['masteryLevel', 'ASC'], ['lastPlayedAt', 'ASC']],
+        order: [
+          // Prioritize words with lower mastery (never seen or just started)
+          ['masteryLevel', 'ASC'],
+          // Then prioritize words that haven't been played recently (oldest lastPlayedAt first)
+          ['lastPlayedAt', 'ASC'],
+          // Add some randomness
+          sequelize.fn('RANDOM')
+        ],
+        limit: limit * 3 // Get more to shuffle from
       });
 
-      // Step 2: Get ALL words for this letter
-      const allWords = await WordModel.findAll({
-        where: {
-          word: { [Op.like]: `${letter.toLowerCase()}%` }
-        },
-        order: [['difficulty', 'ASC'], ['word', 'ASC']]
-      });
-
-      // Step 3: If we have less than limit from progress, add unplayed words
+      // Step 3: Get unplayed words (not in UserProgress)
       const playedWordIds = new Set(progressWords.map(p => p.wordId));
+      const unplayedWords = allWords.filter(w => !playedWordIds.has(w.id));
       
-      if (progressWords.length < limit) {
-        // Get unplayed words (not in UserProgress)
-        const unplayedWords = allWords.filter(w => !playedWordIds.has(w.id));
-        
-        // Add unplayed words to reach the limit
-        const needed = limit - progressWords.length;
-        const additionalWords = unplayedWords.slice(0, needed);
-        
-        // Convert unplayed words to same format as progress words
-        const additionalProgressFormat = additionalWords.map(word => ({
-          id: `temp-${word.id}`,
-          userId,
-          wordId: word.id,
-          gameType: 'new-letter',
-          correctCount: 0,
-          incorrectCount: 0,
-          lastPlayedAt: new Date(),
-          masteryLevel: 0,
-          streak: 0,
-          totalTimeSpent: 0,
-          word: word,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }));
-        
-        return [...progressWords, ...additionalProgressFormat].slice(0, limit);
-      }
+      // Step 4: Combine and shuffle to ensure variety
+      const combinedWords: any[] = [];
       
-      // Return only progress words if we have enough
-      return progressWords.slice(0, limit);
+      // Add progress words (prioritize those with masteryLevel 0 or 1)
+      const lowMasteryWords = progressWords.filter(p => p.masteryLevel === 0 || p.masteryLevel === 1);
+      const higherMasteryWords = progressWords.filter(p => p.masteryLevel >= 2);
+      
+      // Shuffle each group
+      const shuffleArray = <T>(array: T[]): T[] => {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+      };
+      
+      combinedWords.push(...shuffleArray(lowMasteryWords));
+      combinedWords.push(...shuffleArray(higherMasteryWords));
+      
+      // Add unplayed words (shuffled)
+      const shuffledUnplayed = shuffleArray(unplayedWords);
+      const unplayedProgressFormat = shuffledUnplayed.map(word => ({
+        id: `temp-${word.id}`,
+        userId,
+        wordId: word.id,
+        gameType: 'new-letter',
+        correctCount: 0,
+        incorrectCount: 0,
+        lastPlayedAt: new Date(0), // Very old date to prioritize
+        masteryLevel: 0,
+        streak: 0,
+        totalTimeSpent: 0,
+        word: word,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }));
+      
+      combinedWords.push(...unplayedProgressFormat);
+      
+      // Final shuffle and limit
+      const finalWords = shuffleArray(combinedWords).slice(0, limit);
+      
+      return finalWords;
     } catch (error) {
       console.error('Error getting user new words for letter:', error);
       throw error;

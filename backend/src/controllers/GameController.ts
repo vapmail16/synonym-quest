@@ -407,8 +407,9 @@ export class GameController {
     try {
       const userId = (req as any).user.id;
       const { letter } = req.params;
-      const { limit = 200 } = req.query; // High default to support all words per letter
-      const words = await gameService.getUserNewWordsForLetter(userId, letter, parseInt(limit as string));
+      const { limit = 200, exclude = '' } = req.query; // High default to support all words per letter
+      const excludeWords = exclude ? (exclude as string).split(',').filter(w => w.trim()) : [];
+      const words = await gameService.getUserNewWordsForLetter(userId, letter, parseInt(limit as string), excludeWords);
       
       res.json({
         success: true,

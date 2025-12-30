@@ -13,6 +13,7 @@ export class WordController {
     router.get('/stats', this.getDatabaseStats.bind(this));
     router.get('/:id', this.getWordById.bind(this));
     router.get('/text/:word', this.getWordByText.bind(this));
+    router.get('/meaning/:word', this.getOrGenerateMeaning.bind(this));
     router.post('/', this.createWord.bind(this));
     router.post('/:word/ai-synonyms', this.getAISynonyms.bind(this));
     router.post('/validate', this.validateAnswer.bind(this));
@@ -156,6 +157,41 @@ export class WordController {
       res.status(500).json({
         success: false,
         error: error.message || 'Failed to fetch word'
+      });
+    }
+  }
+
+  /**
+   * Get or generate meaning for a word (used for option words)
+   * This endpoint will look up the word, and if not found, generate and store its meaning
+   */
+  async getOrGenerateMeaning(req: Request, res: Response): Promise<void> {
+    try {
+      const { word } = req.params;
+      
+      if (!word) {
+        res.status(400).json({
+          success: false,
+          error: 'Word is required'
+        });
+        return;
+      }
+
+      const result = await wordService.getOrGenerateMeaning(word);
+      
+      res.json({
+        success: true,
+        data: {
+          word: result.word,
+          meaning: result.meaning,
+          isNew: result.isNew
+        }
+      });
+    } catch (error: any) {
+      console.error('Error in getOrGenerateMeaning:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message || 'Failed to get or generate meaning'
       });
     }
   }

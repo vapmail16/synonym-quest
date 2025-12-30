@@ -7,6 +7,7 @@ export interface Word {
   difficulty: 'easy' | 'medium' | 'hard';
   category?: string;
   tags?: string[];
+  meaning?: string;
   correctCount?: number;
   incorrectCount?: number;
   lastReviewed?: Date;
@@ -19,6 +20,7 @@ export interface CreateWordRequest {
   difficulty: 'easy' | 'medium' | 'hard';
   category?: string;
   tags?: string[];
+  meaning?: string;
 }
 
 export interface UpdateWordRequest {
@@ -27,6 +29,7 @@ export interface UpdateWordRequest {
   difficulty?: 'easy' | 'medium' | 'hard';
   category?: string;
   tags?: string[];
+  meaning?: string;
 }
 
 export interface SearchFilters {

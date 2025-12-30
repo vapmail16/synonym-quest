@@ -450,6 +450,95 @@ export class WordService {
   }
 
   /**
+   * Get or generate meaning for a word (main word or synonym)
+   * This is used for option words that might not exist as main words
+   */
+  async getOrGenerateMeaning(wordText: string): Promise<{ word: string; meaning: string; isNew: boolean }> {
+    try {
+      const wordLower = wordText.toLowerCase().trim();
+      
+      // First, check if it exists as a main word
+      let word = await WordModel.findOne({
+        where: { word: wordLower }
+      });
+      
+      if (word) {
+        const wordData = word.toJSON() as Word;
+        if (wordData.meaning) {
+          return { word: wordData.word, meaning: wordData.meaning, isNew: false };
+        }
+      }
+      
+      // If not found as main word, we need to create it or find related words
+      // Don't use the meaning of the word that contains it as a synonym
+      // Instead, generate a meaning specifically for this word
+      let relatedWords: string[] = [];
+      if (!word) {
+        // Find words that have this as a synonym to use as context
+        const allWords = await WordModel.findAll();
+        for (const w of allWords) {
+          const wData = w.toJSON() as Word;
+          if (wData.synonyms && Array.isArray(wData.synonyms)) {
+            const hasSynonym = wData.synonyms.some((s: any) => {
+              const synonymText = typeof s === 'string' ? s : s.word;
+              return synonymText?.toLowerCase() === wordLower;
+            });
+            if (hasSynonym) {
+              // Found a word that has this as a synonym - use it as context
+              relatedWords.push(wData.word);
+              if (relatedWords.length >= 3) break;
+            }
+          }
+        }
+      } else {
+        // If word exists, use its synonyms as context
+        const wordData = word.toJSON() as Word;
+        relatedWords = wordData.synonyms && Array.isArray(wordData.synonyms) 
+          ? wordData.synonyms.map((s: any) => typeof s === 'string' ? s : s.word).filter(Boolean)
+          : [];
+      }
+      
+      // Generate meaning for the requested word itself (wordLower), not a related word
+      const meaning = await openAIService.generateMeaning(wordLower, relatedWords);
+      
+      if (word) {
+        // Update existing word with the meaning
+        await word.update({ meaning });
+        return { word: wordLower, meaning, isNew: false };
+      }
+      
+      // If not found at all, create a new word entry with generated meaning
+      // Use relatedWords we found earlier, or get some random words as synonyms
+      if (relatedWords.length === 0) {
+        const randomWords = await WordModel.findAll({
+          limit: 5,
+          order: WordModel.sequelize?.random()
+        });
+        relatedWords = randomWords.map(w => (w.toJSON() as Word).word).slice(0, 3);
+      }
+      
+      // Format synonyms as array of objects (word, type) for the database
+      const synonymsArray = relatedWords.length > 0 
+        ? relatedWords.map(w => ({ word: w, type: 'exact' }))
+        : [{ word: 'similar', type: 'exact' }]; // Fallback if no related words
+      
+      const newWord = await WordModel.create({
+        word: wordLower,
+        synonyms: synonymsArray as any,
+        difficulty: 'medium',
+        meaning,
+        correctCount: 0,
+        incorrectCount: 0,
+      });
+      
+      return { word: wordLower, meaning, isNew: true };
+    } catch (error) {
+      console.error('Error getting or generating meaning:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Validate user's answer using AI
    */
   async validateAnswerWithAI(

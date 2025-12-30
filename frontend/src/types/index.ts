@@ -7,6 +7,7 @@ export interface Word {
   difficulty: 'easy' | 'medium' | 'hard';
   category?: string;
   tags?: string[];
+  meaning?: string;
   correctCount?: number;
   incorrectCount?: number;
   lastReviewed?: Date;

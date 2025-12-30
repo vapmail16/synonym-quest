@@ -171,6 +171,45 @@ The hint should be educational and help with memory, but not give away the answe
     }
   }
 
+  /**
+   * Generate a simple, child-friendly meaning for a word
+   */
+  async generateMeaning(word: string, synonyms: string[] = []): Promise<string> {
+    try {
+      const synonymsText = synonyms.length > 0 ? `Synonyms: ${synonyms.slice(0, 3).join(', ')}.` : '';
+      const prompt = `Provide a simple, easy-to-understand meaning for the word "${word}" in plain language that a child can understand. 
+${synonymsText}
+Keep it short (1-2 sentences, maximum 100 words). Use simple words and avoid complex explanations.`;
+
+      const response = await this.client.chat.completions.create({
+        model: this.model,
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful vocabulary teacher for children. Explain word meanings in simple, clear language that is easy to understand.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 150,
+        temperature: 0.3,
+      });
+
+      const meaning = response.choices[0]?.message?.content?.trim();
+      if (!meaning) {
+        throw new Error('No meaning generated');
+      }
+
+      return meaning;
+    } catch (error) {
+      console.error('Error generating meaning:', error);
+      // Fallback meaning
+      return `A word that means something similar to ${synonyms.length > 0 ? synonyms[0] : 'other related words'}.`;
+    }
+  }
+
   private buildSynonymPrompt(word: string, context?: string, maxSynonyms?: number): string {
     let prompt = `Generate ${maxSynonyms || 10} synonyms for the word "${word}".`;
     

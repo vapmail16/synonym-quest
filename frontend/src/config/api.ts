@@ -21,10 +21,10 @@ export const config = {
       `${API_URL}/api/games/letter/${letter}/new${exclude ? `?exclude=${exclude}` : ''}`,
     LETTER_OLD: (letter: string, exclude?: string) => 
       `${API_URL}/api/games/letter/${letter}/old${exclude ? `?exclude=${exclude}` : ''}`,
-    USER_LETTER_NEW: (letter: string) => 
-      `${API_URL}/api/games/user/letter/${letter}/new`,
-    USER_LETTER_OLD: (letter: string) => 
-      `${API_URL}/api/games/user/letter/${letter}/old`,
+    USER_LETTER_NEW: (letter: string, exclude?: string) => 
+      `${API_URL}/api/games/user/letter/${letter}/new${exclude ? `?exclude=${exclude}` : ''}`,
+    USER_LETTER_OLD: (letter: string, exclude?: string) => 
+      `${API_URL}/api/games/user/letter/${letter}/old${exclude ? `?exclude=${exclude}` : ''}`,
     USER_REVIEW_GAME: (gameType: string) => 
       `${API_URL}/api/games/user/review/${gameType}`,
   },
@@ -36,6 +36,8 @@ export const config = {
     USER_LEARNED: `${API_URL}/api/words/user/learned`,
     WORD_STATS: (wordId: string) => 
       `${API_URL}/api/words/${wordId}/stats`,
+    GET_OR_GENERATE_MEANING: (word: string) => 
+      `${API_URL}/api/words/meaning/${encodeURIComponent(word)}`,
   },
 };
 

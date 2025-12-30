@@ -7,6 +7,7 @@ interface Word {
   word: string;
   synonyms: Array<{ word: string; type: string }>;
   difficulty: string;
+  meaning?: string;
   correctCount: number;
   incorrectCount: number;
 }
@@ -72,6 +73,8 @@ const Games: React.FC<GamesProps> = ({ user }) => {
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [retryCount, setRetryCount] = useState<number>(0);
   const [recentlyAskedWords, setRecentlyAskedWords] = useState<string[]>([]);
+  const [optionMeanings, setOptionMeanings] = useState<{ [word: string]: string }>({});
+  const [loadingMeanings, setLoadingMeanings] = useState<boolean>(false);
   const [savedGame, setSavedGame] = useState<{
     gameType: GameType;
     score: number;
@@ -364,6 +367,54 @@ const Games: React.FC<GamesProps> = ({ user }) => {
     }
   }, [currentGame, gameStarted, score, streak, questionsAnswered, wordLadderStep, saveGameState]);
 
+  // Fallback dictionary for common generic words that might be used as options
+  const genericWordMeanings: { [key: string]: string } = {
+    'happy': 'Feeling or showing pleasure or contentment.',
+    'sad': 'Feeling or showing sorrow or unhappiness.',
+    'big': 'Of considerable size, extent, or intensity.',
+    'small': 'Of a size that is less than normal or usual.',
+    'fast': 'Moving or capable of moving at high speed.',
+    'slow': 'Moving or operating at a low speed.',
+    'good': 'To be desired or approved of; having positive qualities.',
+    'bad': 'Of poor quality or a low standard; not good.',
+    'hot': 'Having a high degree of heat or a high temperature.',
+    'cold': 'Of or at a low or relatively low temperature.',
+    'new': 'Not existing before; made, introduced, or discovered recently.',
+    'old': 'Having lived for a long time; no longer young.',
+    'high': 'Of great vertical extent; situated far above the ground.',
+    'low': 'Of less than average height; not high.',
+    'left': 'On, toward, or relating to the side of a human body or of a thing that is to the west when the person or thing is facing north.',
+    'right': 'On, toward, or relating to the side of a human body or of a thing that is to the east when the person or thing is facing north.'
+  };
+
+  // Helper function to find meaning for any option (word or synonym)
+  const findMeaningForOption = useCallback((option: string, allWords: Word[]): { word: Word | null; meaning: string } | null => {
+    if (!option || option.trim() === '') return null;
+    
+    const optionLower = option.toLowerCase().trim();
+    
+    // Skip dummy/generic options that won't have meanings
+    if (optionLower.startsWith('option') || optionLower.startsWith('random') || optionLower.startsWith('distractor')) {
+      return null;
+    }
+    
+    // First, check if option is a main word (exact match)
+    const foundWord = allWords.find((w: Word) => w.word.toLowerCase() === optionLower);
+    
+    // Only use meaning if it's an exact match (main word), not if it's just a synonym
+    // For synonyms, we'll fetch from API to get the correct meaning for that specific word
+    if (foundWord && foundWord.meaning) {
+      return { word: foundWord, meaning: foundWord.meaning };
+    }
+    
+    // If not found in database, check generic word dictionary
+    if (genericWordMeanings[optionLower]) {
+      return { word: null, meaning: genericWordMeanings[optionLower] };
+    }
+    
+    return null;
+  }, []);
+
   // Generate multiple choice options for questions
   const generateMultipleChoiceOptions = useCallback((correctWord: Word, allWords: Word[]): string[] => {
     const correctSynonym = correctWord.synonyms[0]?.word || 'correct';
@@ -552,10 +603,11 @@ const Games: React.FC<GamesProps> = ({ user }) => {
       if (user && (gameType === 'new-letter' || gameType === 'old-letter' || gameType === 'random-new' || gameType === 'random-old')) {
         try {
           let endpoint = '';
+          const excludedWords = Array.from(playedWordsInSession).join(',');
           if (gameType === 'new-letter') {
-            endpoint = config.GAME_ENDPOINTS.USER_LETTER_NEW(selectedLetter.toLowerCase());
+            endpoint = config.GAME_ENDPOINTS.USER_LETTER_NEW(selectedLetter.toLowerCase(), excludedWords);
           } else if (gameType === 'old-letter') {
-            endpoint = config.GAME_ENDPOINTS.USER_LETTER_OLD(selectedLetter.toLowerCase());
+            endpoint = config.GAME_ENDPOINTS.USER_LETTER_OLD(selectedLetter.toLowerCase(), excludedWords);
           } else if (gameType === 'random-new') {
             endpoint = config.WORD_ENDPOINTS.USER_NEW;
           } else if (gameType === 'random-old') {
@@ -941,6 +993,80 @@ const Games: React.FC<GamesProps> = ({ user }) => {
       setError('An error occurred while processing your answer. Please try again.');
     }
   };
+
+  // Fetch meanings for all options when answer is shown
+  useEffect(() => {
+    if (showResult && currentQuestion && currentQuestion.options) {
+      const fetchOptionMeanings = async () => {
+        setLoadingMeanings(true);
+        const meanings: { [word: string]: string } = {};
+        
+        // First, try to find meanings from allWords
+        for (const option of currentQuestion.options) {
+          const meaningData = findMeaningForOption(option, allWords);
+          if (meaningData?.meaning) {
+            meanings[option] = meaningData.meaning;
+          }
+        }
+        
+        // For options without meanings, fetch from API
+        const optionsWithoutMeanings = currentQuestion.options.filter(
+          option => !meanings[option]
+        );
+        
+        if (optionsWithoutMeanings.length > 0) {
+          try {
+            console.log(`Fetching meanings for ${optionsWithoutMeanings.length} options:`, optionsWithoutMeanings);
+            const meaningPromises = optionsWithoutMeanings.map(async (option) => {
+              try {
+                const url = config.WORD_ENDPOINTS.GET_OR_GENERATE_MEANING(option);
+                console.log(`Fetching meaning for "${option}" from:`, url);
+                const response = await fetch(url);
+                console.log(`Response for "${option}":`, response.status, response.ok);
+                if (response.ok) {
+                  const data = await response.json();
+                  console.log(`Data for "${option}":`, data);
+                  if (data.success && data.data?.meaning) {
+                    return { option, meaning: data.data.meaning };
+                  } else {
+                    console.warn(`No meaning in response for "${option}":`, data);
+                  }
+                } else {
+                  const errorText = await response.text();
+                  console.error(`Error response for "${option}":`, response.status, errorText);
+                }
+              } catch (error) {
+                console.error(`Error fetching meaning for "${option}":`, error);
+              }
+              return null;
+            });
+            
+            const fetchedMeanings = await Promise.all(meaningPromises);
+            console.log('Fetched meanings:', fetchedMeanings);
+            fetchedMeanings.forEach(result => {
+              if (result) {
+                meanings[result.option] = result.meaning;
+                console.log(`Added meaning for "${result.option}":`, result.meaning);
+              }
+            });
+          } catch (error) {
+            console.error('Error fetching option meanings:', error);
+          }
+        }
+        
+        console.log('Final meanings object:', meanings);
+        
+        setOptionMeanings(meanings);
+        setLoadingMeanings(false);
+      };
+      
+      fetchOptionMeanings();
+    } else if (!showResult) {
+      // Clear meanings when starting a new question
+      setOptionMeanings({});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showResult, currentQuestion?.id]);
 
   const updateWordProgress = async (wordId: string, isCorrect: boolean) => {
     try {
@@ -1337,6 +1463,11 @@ const Games: React.FC<GamesProps> = ({ user }) => {
               <div className="question-text">
                 {currentGame === 'synonym-match-review' && <div style={{ marginBottom: '10px', color: '#666' }}>📖 Review Mode</div>}
                 What is a synonym for "<strong>{currentQuestion.questionWord.word}</strong>"?
+                {currentQuestion.questionWord.meaning && (
+                  <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '8px', fontSize: '0.95em', color: '#1e40af' }}>
+                    <strong>Meaning:</strong> {currentQuestion.questionWord.meaning}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1346,6 +1477,11 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                   {currentGame === 'new-letter' ? '🆕 Learning New Words' : '🔄 Reviewing Learned Words'} - Letter {selectedLetter}
                 </div>
                 What is a synonym for "<strong>{currentQuestion.questionWord.word}</strong>"?
+                {currentQuestion.questionWord.meaning && (
+                  <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '8px', fontSize: '0.95em', color: '#1e40af' }}>
+                    <strong>Meaning:</strong> {currentQuestion.questionWord.meaning}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1355,6 +1491,11 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                   {currentGame === 'random-new' ? '🆕 Random New Words' : '📚 Random Review'} - Question {questionsAnswered + 1}
                 </div>
                 What is a synonym for "<strong>{currentQuestion.questionWord.word}</strong>"?
+                {currentQuestion.questionWord.meaning && (
+                  <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '8px', fontSize: '0.95em', color: '#1e40af' }}>
+                    <strong>Meaning:</strong> {currentQuestion.questionWord.meaning}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1362,6 +1503,11 @@ const Games: React.FC<GamesProps> = ({ user }) => {
               <div className="question-text">
                 <div style={{ marginBottom: '10px' }}>🪜 Word Ladder {currentGame === 'word-ladder-review' ? '(Review)' : ''} - Step {Math.max(1, wordLadderStep + 1)}</div>
                 What is a synonym for "<strong>{currentQuestion?.questionWord?.word || 'Loading...'}</strong>"?
+                {currentQuestion?.questionWord?.meaning && (
+                  <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '8px', fontSize: '0.95em', color: '#1e40af' }}>
+                    <strong>Meaning:</strong> {currentQuestion.questionWord.meaning}
+                  </div>
+                )}
                 <div style={{ marginTop: '10px', fontSize: '0.9em', color: '#666' }}>
                   Correct answers climb the ladder! Wrong answers keep you on the same step.
                 </div>
@@ -1374,6 +1520,11 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                   {currentGame === 'daily-quest' ? '📅 Daily Quest' : '⚡ Speed Round'} - Question {questionsAnswered + 1}
                 </div>
                 What is a synonym for "<strong>{currentQuestion.questionWord.word}</strong>"?
+                {currentQuestion.questionWord.meaning && (
+                  <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f0f9ff', borderRadius: '8px', fontSize: '0.95em', color: '#1e40af' }}>
+                    <strong>Meaning:</strong> {currentQuestion.questionWord.meaning}
+                  </div>
+                )}
                 <div style={{ marginTop: '10px', fontSize: '0.9em', color: '#666' }}>
                   {currentGame === 'daily-quest' ? 'Answer as many as possible in 5 minutes!' : 'Answer as many as possible in 1 minute!'}
                 </div>
@@ -1424,25 +1575,27 @@ const Games: React.FC<GamesProps> = ({ user }) => {
 
             {(currentGame === 'synonym-match' || currentGame === 'synonym-match-review' || currentGame.includes('letter') || currentGame.includes('random') || currentGame === 'daily-quest' || currentGame === 'speed-round' || currentGame === 'speed-round-review' || currentGame === 'word-ladder' || currentGame === 'word-ladder-review') && (
               <div className="options">
-                {currentQuestion.options.map((option: string, index: number) => (
-                  <button
-                    key={index}
-                    className={`option-button ${selectedAnswer === option ? 'selected' : ''}`}
-                    onClick={() => handleAnswer(option)}
-                    disabled={showResult}
-                    aria-label={`Option ${index + 1}: ${option}`}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        if (!showResult) {
-                          handleAnswer(option);
+                {currentQuestion.options.map((option: string, index: number) => {
+                  return (
+                    <button
+                      key={index}
+                      className={`option-button ${selectedAnswer === option ? 'selected' : ''}`}
+                      onClick={() => handleAnswer(option)}
+                      disabled={showResult}
+                      aria-label={`Option ${index + 1}: ${option}`}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          if (!showResult) {
+                            handleAnswer(option);
+                          }
                         }
-                      }
-                    }}
-                  >
-                    {option}
-                  </button>
-                ))}
+                      }}
+                    >
+                      {option}
+                    </button>
+                  );
+                })}
               </div>
             )}
 
@@ -1464,7 +1617,57 @@ const Games: React.FC<GamesProps> = ({ user }) => {
                     `❌ Incorrect. The right answer is "${currentQuestion.correctAnswer}"`
                   }
                 </div>
-                <button className="next-button" onClick={nextQuestion}>
+                
+                {/* Show meanings for all options after answer is selected */}
+                <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f0f9ff', borderRadius: '8px', border: '1px solid #bae6fd' }}>
+                  <div style={{ fontSize: '1em', fontWeight: 'bold', marginBottom: '12px', color: '#1e40af' }}>
+                    📚 Meanings of all options:
+                  </div>
+                  {loadingMeanings && (
+                    <div style={{ padding: '10px', textAlign: 'center', color: '#6b7280' }}>
+                      Loading meanings...
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {currentQuestion.options.map((option: string, index: number) => {
+                      const meaning = optionMeanings[option];
+                      const isCorrect = option.toLowerCase() === currentQuestion.correctAnswer.toLowerCase();
+                      const isSelected = option.toLowerCase() === selectedAnswer.toLowerCase();
+                      
+                      return (
+                        <div 
+                          key={index} 
+                          style={{ 
+                            padding: '10px', 
+                            backgroundColor: isCorrect ? '#dcfce7' : isSelected ? '#fee2e2' : '#ffffff',
+                            borderRadius: '6px', 
+                            border: isCorrect ? '2px solid #16a34a' : isSelected ? '2px solid #ef4444' : '1px solid #e5e7eb',
+                            fontSize: '0.9em'
+                          }}
+                        >
+                          <div style={{ fontWeight: 'bold', marginBottom: '4px', color: isCorrect ? '#16a34a' : isSelected ? '#ef4444' : '#374151' }}>
+                            {option} {isCorrect && '✓ (Correct Answer)'} {isSelected && !isCorrect && '✗ (Your Answer)'}
+                          </div>
+                          {meaning ? (
+                            <div style={{ color: '#4b5563' }}>
+                              {meaning}
+                            </div>
+                          ) : loadingMeanings ? (
+                            <div style={{ color: '#9ca3af', fontStyle: 'italic' }}>
+                              Loading meaning...
+                            </div>
+                          ) : (
+                            <div style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '0.85em' }}>
+                              Generating meaning... (this may take a moment)
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                
+                <button className="next-button" onClick={nextQuestion} style={{ marginTop: '15px' }}>
                   Next Question
                 </button>
               </div>

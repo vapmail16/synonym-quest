@@ -7,6 +7,7 @@ export class WordModel extends Model<Word> implements Word {
   public synonyms!: string[];
   public category?: string;
   public difficulty!: 'easy' | 'medium' | 'hard';
+  public meaning?: string;
   public createdAt!: Date;
   public lastReviewed?: Date;
   public correctCount!: number;
@@ -44,8 +45,18 @@ export const initWordModel = (sequelize: Sequelize): typeof WordModel => {
               throw new Error('At least one synonym is required');
             }
             value.forEach((synonym: any) => {
-              if (typeof synonym !== 'string' || synonym.trim().length === 0) {
-                throw new Error('Each synonym must be a non-empty string');
+              // Accept both string format and object format { word: string, type: string }
+              if (typeof synonym === 'string') {
+                if (synonym.trim().length === 0) {
+                  throw new Error('Each synonym must be a non-empty string');
+                }
+              } else if (typeof synonym === 'object' && synonym !== null) {
+                // Object format: { word: string, type: string }
+                if (!synonym.word || typeof synonym.word !== 'string' || synonym.word.trim().length === 0) {
+                  throw new Error('Each synonym object must have a non-empty word property');
+                }
+              } else {
+                throw new Error('Each synonym must be a string or an object with a word property');
               }
             });
           },
@@ -105,6 +116,13 @@ export const initWordModel = (sequelize: Sequelize): typeof WordModel => {
               });
             }
           },
+        },
+      },
+      meaning: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        validate: {
+          len: [0, 500],
         },
       },
     },
