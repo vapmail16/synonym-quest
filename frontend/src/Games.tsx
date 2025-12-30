@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import authService from './services/authService';
 import config from './config/api';
+import { Badge } from './types/badge';
+import EarnedBadgesDisplay from './components/EarnedBadgesDisplay';
 
 interface Word {
   id: string;
@@ -47,9 +49,10 @@ type GameType =
 
 interface GamesProps {
   user?: any; // User object from auth
+  onBadgeEarned?: (badge: any) => void;
 }
 
-const Games: React.FC<GamesProps> = ({ user }) => {
+const Games: React.FC<GamesProps> = ({ user, onBadgeEarned }) => {
   const [currentGame, setCurrentGame] = useState<GameType | null>(null);
   const [selectedLetter, setSelectedLetter] = useState<string>('A');
   // const [availableLetters, setAvailableLetters] = useState<string[]>([]);
@@ -75,6 +78,7 @@ const Games: React.FC<GamesProps> = ({ user }) => {
   const [recentlyAskedWords, setRecentlyAskedWords] = useState<string[]>([]);
   const [optionMeanings, setOptionMeanings] = useState<{ [word: string]: string }>({});
   const [loadingMeanings, setLoadingMeanings] = useState<boolean>(false);
+  const [badgeRefreshTrigger, setBadgeRefreshTrigger] = useState<number>(0);
   const [savedGame, setSavedGame] = useState<{
     gameType: GameType;
     score: number;
@@ -282,6 +286,9 @@ const Games: React.FC<GamesProps> = ({ user }) => {
   const endGame = useCallback(() => {
     // Clear saved game when ending
     clearSavedGame();
+    
+    // Don't refresh badges on every game end - only when badges are earned
+    // setBadgeRefreshTrigger(prev => prev + 1);
     
     // Clear all game state
     setCurrentGame(null);
@@ -1089,6 +1096,45 @@ const Games: React.FC<GamesProps> = ({ user }) => {
         if (response.ok) {
           console.log(`✅ User progress updated for ${currentGame}: ${isCorrect ? 'correct' : 'incorrect'}`);
           
+          // Check for badges if answer was correct
+          if (isCorrect && onBadgeEarned) {
+            try {
+              const gameType = (currentGame || 'unknown').replace('-review', '');
+              const badgeCheckResponse = await fetch(config.BADGE_ENDPOINTS.CHECK_BADGES, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${authService.getToken()}`
+                },
+                body: JSON.stringify({
+                  type: 'WORD_LEARNED',
+                  data: {
+                    wordId,
+                    gameType,
+                  },
+                }),
+              });
+
+              if (badgeCheckResponse.ok) {
+                const badgeData = await badgeCheckResponse.json();
+                if (badgeData.success && badgeData.data && badgeData.data.length > 0) {
+                  // Refresh badges display when a new badge is earned
+                  setBadgeRefreshTrigger(prev => prev + 1);
+                  
+                  // Show notification for each badge earned (show first one, queue others)
+                  badgeData.data.forEach((badge: Badge, index: number) => {
+                    setTimeout(() => {
+                      onBadgeEarned(badge);
+                    }, index * 2000); // Stagger notifications by 2 seconds
+                  });
+                }
+              }
+            } catch (badgeError) {
+              // Don't fail if badge check fails
+              console.error('Error checking badges:', badgeError);
+            }
+          }
+          
           // Reload user stats and letter progress
           console.log('🔄 Reloading user stats and letter progress...');
           const [statsResponse] = await Promise.all([
@@ -1210,6 +1256,10 @@ const Games: React.FC<GamesProps> = ({ user }) => {
             <span className="stat-label">Total Words</span>
           </div>
         </div>
+      )}
+
+      {user && (
+        <EarnedBadgesDisplay userId={user.id} maxDisplay={5} refreshTrigger={badgeRefreshTrigger} />
       )}
 
       {savedGame && (

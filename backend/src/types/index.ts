@@ -124,3 +124,62 @@ export interface AIValidationResponse {
   isValid?: boolean;
   feedback?: string;
 }
+
+// Badge System Types
+export type BadgeCategory = 'learning' | 'game' | 'performance' | 'special';
+export type BadgeRarity = 'common' | 'rare' | 'epic' | 'legendary';
+export type BadgeCriteriaType = 'word_count' | 'streak' | 'accuracy' | 'game_mode' | 'letter_completion' | 'custom';
+
+export interface BadgeCriteria {
+  type: BadgeCriteriaType;
+  value: number;
+  gameType?: string;
+  letter?: string;
+  minAccuracy?: number;
+  minStreak?: number;
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  category: BadgeCategory;
+  icon: string; // Emoji or icon URL
+  criteria: BadgeCriteria;
+  rarity: BadgeRarity;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export interface UserBadge {
+  id: string;
+  userId: string;
+  badgeId: string;
+  earnedAt: Date;
+  progress: number; // For progress-based badges (0-100)
+  metadata: Record<string, any>;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export interface BadgeEvent {
+  type: 'WORD_LEARNED' | 'GAME_COMPLETED' | 'STREAK_UPDATED' | 'LETTER_COMPLETED' | 'PERFECT_SCORE' | 'CUSTOM';
+  userId: string;
+  data: {
+    wordId?: string;
+    gameType?: string;
+    accuracy?: number;
+    streak?: number;
+    letter?: string;
+    wordCount?: number;
+    [key: string]: any;
+  };
+}
+
+export interface BadgeProgress {
+  badgeId: string;
+  badge: Badge;
+  progress: number;
+  isEarned: boolean;
+  earnedAt?: Date;
+}

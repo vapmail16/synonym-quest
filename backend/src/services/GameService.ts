@@ -2,9 +2,11 @@ import { WordModel } from '../models/Word';
 import { GameProgressModel } from '../models/GameProgress';
 import { UserProgress } from '../models';
 import { DailyQuestModel } from '../models/DailyQuest';
-import { Word } from '../types';
+import { Word, BadgeEvent } from '../types';
 import { Op } from 'sequelize';
 import { sequelize } from '../config/database';
+import { BadgeService } from './BadgeService';
+import { BadgeModel, UserBadgeModel, UserProgressModel } from '../models';
 
 export interface GameQuestion {
   id: string;
@@ -31,6 +33,17 @@ export interface LetterProgress {
 }
 
 export class GameService {
+  private badgeService: BadgeService;
+
+  constructor(badgeService?: BadgeService) {
+    // Initialize BadgeService if not provided (for backward compatibility)
+    this.badgeService = badgeService || new BadgeService(
+      BadgeModel,
+      UserBadgeModel,
+      UserProgressModel
+    );
+  }
+
   /**
    * Get progress for a specific letter
    */
@@ -524,7 +537,67 @@ export class GameService {
     timeSpent: number = 0
   ): Promise<void> {
     try {
+      // Update progress first
       await UserProgress.updateProgress(userId, wordId, gameType, isCorrect, timeSpent);
+
+      // Check badges if answer was correct
+      if (isCorrect) {
+        // Count total words learned by this user
+        const wordCount = await UserProgress.count({
+          where: {
+            userId,
+            masteryLevel: {
+              [Op.gte]: 1, // At least level 1 mastery
+            },
+          },
+          distinct: true,
+          col: 'wordId',
+        });
+
+        // Check for WORD_LEARNED badge
+        const wordLearnedEvent: BadgeEvent = {
+          type: 'WORD_LEARNED',
+          userId,
+          data: {
+            wordId,
+            wordCount,
+            gameType,
+          },
+        };
+
+        try {
+          await this.badgeService.checkAndAwardBadges(wordLearnedEvent);
+        } catch (badgeError) {
+          // Don't fail the progress update if badge checking fails
+          console.error('Error checking badges:', badgeError);
+        }
+
+        // Check for GAME_COMPLETED badge (count games played for this game type)
+        const gameCount = await UserProgress.count({
+          where: {
+            userId,
+            gameType,
+          },
+          distinct: true,
+          col: 'wordId',
+        });
+
+        const gameCompletedEvent: BadgeEvent = {
+          type: 'GAME_COMPLETED',
+          userId,
+          data: {
+            gameType,
+            wordId,
+          },
+        };
+
+        try {
+          await this.badgeService.checkAndAwardBadges(gameCompletedEvent);
+        } catch (badgeError) {
+          // Don't fail the progress update if badge checking fails
+          console.error('Error checking game badges:', badgeError);
+        }
+      }
     } catch (error) {
       console.error('Error updating user game progress:', error);
       throw error;

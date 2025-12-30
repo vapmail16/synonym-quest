@@ -39,6 +39,14 @@ export const config = {
     GET_OR_GENERATE_MEANING: (word: string) => 
       `${API_URL}/api/words/meaning/${encodeURIComponent(word)}`,
   },
+  BADGE_ENDPOINTS: {
+    GET_ALL: (category?: string, rarity?: string) => 
+      `${API_URL}/api/badges${category || rarity ? `?${category ? `category=${category}` : ''}${category && rarity ? '&' : ''}${rarity ? `rarity=${rarity}` : ''}` : ''}`,
+    GET_BY_ID: (id: string) => `${API_URL}/api/badges/${id}`,
+    GET_USER_BADGES: `${API_URL}/api/badges/user`,
+    GET_USER_PROGRESS: `${API_URL}/api/badges/user/progress`,
+    CHECK_BADGES: `${API_URL}/api/badges/check`,
+  },
 };
 
 export default config;

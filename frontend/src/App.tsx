@@ -4,13 +4,18 @@ import Games from './Games';
 import './Games.css';
 import AuthModal from './components/AuthModal';
 import UserProfile from './components/UserProfile';
+import BadgesPage from './components/BadgesPage';
+import BadgeNotification from './components/BadgeNotification';
 import authService, { User } from './services/authService';
+import { Badge } from './types/badge';
 
 const AppHeader: React.FC<{ 
   user: User | null; 
   onLoginClick: () => void; 
-  onLogout: () => void; 
-}> = ({ user, onLoginClick, onLogout }) => (
+  onLogout: () => void;
+  currentView: 'games' | 'badges';
+  setCurrentView: (view: 'games' | 'badges') => void;
+}> = ({ user, onLoginClick, onLogout, currentView, setCurrentView }) => (
   <header style={{ 
     backgroundColor: '#3b82f6', 
     color: 'white', 
@@ -26,12 +31,40 @@ const AppHeader: React.FC<{
       padding: '0 20px'
     }}>
       <div style={{ textAlign: 'left' }}>
-        <h1 style={{ margin: 0, fontSize: '2.5rem' }}>🧠 Synonym Quest</h1>
+        <h1 style={{ margin: 0, fontSize: '2.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ 
+            color: '#ff69b4', 
+            fontSize: '2.5rem',
+            lineHeight: '1',
+            display: 'inline-block'
+          }}>♥</span>
+          Synonym Quest
+        </h1>
         <p style={{ margin: '0.5rem 0 0', fontSize: '1.2rem', opacity: 0.9 }}>
           Choose from 9 different vocabulary games to enhance your learning!
         </p>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {user && (
+          <button
+            onClick={() => setCurrentView(currentView === 'games' ? 'badges' : 'games')}
+            style={{
+              padding: '8px 16px',
+              background: currentView === 'badges' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.2)',
+              color: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.3)',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            onMouseOver={(e) => (e.target as HTMLButtonElement).style.background = 'rgba(255, 255, 255, 0.3)'}
+            onMouseOut={(e) => (e.target as HTMLButtonElement).style.background = currentView === 'badges' ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.2)'}
+          >
+            {currentView === 'games' ? '🏆 View Badges' : '🎮 Back to Games'}
+          </button>
+        )}
         {user ? (
           <UserProfile onLogout={onLogout} />
         ) : (
@@ -63,6 +96,8 @@ function App() {
   const [user, setUser] = useState<User | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentView, setCurrentView] = useState<'games' | 'badges'>('games');
+  const [earnedBadge, setEarnedBadge] = useState<Badge | null>(null);
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -141,14 +176,26 @@ function App() {
       <AppHeader 
         user={user} 
         onLoginClick={handleLoginClick} 
-        onLogout={handleLogout} 
+        onLogout={handleLogout}
+        currentView={currentView}
+        setCurrentView={setCurrentView}
       />
-      <Games user={user} />
+      
+      {currentView === 'games' ? (
+        <Games user={user} onBadgeEarned={setEarnedBadge} />
+      ) : (
+        <BadgesPage userId={user?.id} />
+      )}
       
       <AuthModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         onSuccess={handleAuthSuccess}
+      />
+
+      <BadgeNotification
+        badge={earnedBadge}
+        onClose={() => setEarnedBadge(null)}
       />
     </div>
   );
