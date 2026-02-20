@@ -95,7 +95,12 @@ export class UserProgressModel extends Model<UserProgressAttributes, UserProgres
       where: { userId }
     });
 
-    const totalWordsLearned = allProgress.filter(p => p.correctCount >= 1).length;
+    // Count distinct words (same word in multiple game types = 1 word)
+    // Aligns with BadgeService.getUserWordCount and Lexicon Legend badge logic
+    const learnedWordIds = new Set(
+      allProgress.filter(p => p.correctCount >= 1).map(p => p.wordId)
+    );
+    const totalWordsLearned = learnedWordIds.size;
     const totalGamesPlayed = allProgress.reduce((sum, p) => sum + p.correctCount + p.incorrectCount, 0);
     
     const currentStreak = Math.max(...allProgress.map(p => p.streak), 0);

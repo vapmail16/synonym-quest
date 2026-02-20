@@ -529,6 +529,38 @@ describe('BadgeController API Endpoints', () => {
       expect(Array.isArray(response.body.data)).toBe(true);
     });
 
+    it('should award Perfect Score badge when accuracy is 100', async () => {
+      // Create Perfect Score badge
+      const perfectBadge = await BadgeModelInstance.create({
+        name: 'Perfect Score',
+        description: 'Get 100% accuracy in a game',
+        category: 'performance',
+        icon: '💯',
+        criteria: { type: 'accuracy', value: 100, minAccuracy: 100 },
+        rarity: 'rare',
+      });
+
+      const event = {
+        type: 'PERFECT_SCORE',
+        data: {
+          accuracy: 100,
+          gameType: 'synonym-match',
+        },
+      };
+
+      const response = await request(app)
+        .post('/api/badges/check')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(event)
+        .expect(200);
+
+      expect(response.body.success).toBe(true);
+      expect(response.body.data).toBeDefined();
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body.data.length).toBe(1);
+      expect(response.body.data[0].id).toBe(perfectBadge.id);
+    });
+
     it('should require authentication', async () => {
       const response = await request(app)
         .post('/api/badges/check')

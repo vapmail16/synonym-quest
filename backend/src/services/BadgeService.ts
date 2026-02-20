@@ -1,4 +1,4 @@
-import { Op, QueryTypes } from 'sequelize';
+import { Op, fn, col } from 'sequelize';
 import { BadgeEvent, Badge, UserBadge, BadgeProgress, BadgeCriteria } from '../types';
 import { BadgeModel, UserBadgeModel, UserProgressModel } from '../models';
 
@@ -328,27 +328,22 @@ export class BadgeService {
 
   /**
    * Get game counts by type for a user (batched query)
+   * Uses ORM instead of raw SQL for pg-mem and dialect compatibility
    */
   private async getUserGameCountsByType(userId: string): Promise<Map<string, number>> {
-    const { sequelize } = this.userProgressModel;
-    if (!sequelize) {
-      return new Map();
-    }
-
-    const gameProgress = await sequelize.query(
-      `SELECT "gameType", COUNT(DISTINCT "wordId") as count 
-       FROM "user_progress" 
-       WHERE "userId" = :userId 
-       GROUP BY "gameType"`,
-      {
-        replacements: { userId },
-        type: QueryTypes.SELECT,
-      }
-    ) as Array<{ gameType: string; count: string | number }>;
+    const rows = (await this.userProgressModel.findAll({
+      where: { userId },
+      attributes: [
+        'gameType',
+        [fn('COUNT', fn('DISTINCT', col('wordId'))), 'count'],
+      ],
+      group: ['gameType'],
+      raw: true,
+    })) as unknown as Array<{ gameType: string; count: string | number }>;
 
     const counts = new Map<string, number>();
-    for (const row of gameProgress) {
-      const count = typeof row.count === 'string' ? parseInt(row.count, 10) : row.count;
+    for (const row of rows) {
+      const count = typeof row.count === 'string' ? parseInt(row.count, 10) : Number(row.count);
       counts.set(row.gameType, count || 0);
     }
     return counts;

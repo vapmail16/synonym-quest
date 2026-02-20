@@ -460,6 +460,75 @@ describe('BadgeService', () => {
       expect(awardedBadges.length).toBe(1);
       expect(awardedBadges[0].id).toBe(badge.id);
     });
+
+    it('should award Perfect Score badge when event has accuracy >= 100', async () => {
+      const user = await UserModel.create({
+        email: 'test@example.com',
+        password: 'hashed',
+        fullName: 'Test User',
+      });
+
+      const badge = await BadgeModel.create({
+        name: 'Perfect Score',
+        description: 'Get 100% accuracy in a game',
+        category: 'performance' as BadgeCategory,
+        icon: '💯',
+        criteria: {
+          type: 'accuracy',
+          value: 100,
+          minAccuracy: 100,
+        } as BadgeCriteria,
+        rarity: 'rare' as BadgeRarity,
+      });
+
+      const event: BadgeEvent = {
+        type: 'PERFECT_SCORE',
+        userId: user.id,
+        data: {
+          accuracy: 100,
+          gameType: 'synonym-match',
+        },
+      };
+
+      const awardedBadges = await badgeService.checkAndAwardBadges(event);
+
+      expect(awardedBadges.length).toBe(1);
+      expect(awardedBadges[0].id).toBe(badge.id);
+    });
+
+    it('should NOT award Perfect Score badge when accuracy < 100', async () => {
+      const user = await UserModel.create({
+        email: 'test@example.com',
+        password: 'hashed',
+        fullName: 'Test User',
+      });
+
+      await BadgeModel.create({
+        name: 'Perfect Score',
+        description: 'Get 100% accuracy in a game',
+        category: 'performance' as BadgeCategory,
+        icon: '💯',
+        criteria: {
+          type: 'accuracy',
+          value: 100,
+          minAccuracy: 100,
+        } as BadgeCriteria,
+        rarity: 'rare' as BadgeRarity,
+      });
+
+      const event: BadgeEvent = {
+        type: 'PERFECT_SCORE',
+        userId: user.id,
+        data: {
+          accuracy: 99,
+          gameType: 'synonym-match',
+        },
+      };
+
+      const awardedBadges = await badgeService.checkAndAwardBadges(event);
+
+      expect(awardedBadges.length).toBe(0);
+    });
   });
 
   describe('getUserBadges', () => {

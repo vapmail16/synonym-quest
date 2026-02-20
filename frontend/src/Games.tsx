@@ -68,6 +68,7 @@ const Games: React.FC<GamesProps> = ({ user, onBadgeEarned }) => {
   const [score, setScore] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
   const [questionsAnswered, setQuestionsAnswered] = useState<number>(0);
+  const [correctAnswersInSession, setCorrectAnswersInSession] = useState<number>(0);
   const [wordLadderStep, setWordLadderStep] = useState<number>(0);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
@@ -284,12 +285,41 @@ const Games: React.FC<GamesProps> = ({ user, onBadgeEarned }) => {
 
   // Define endGame function before using it in useEffect
   const endGame = useCallback(() => {
+    // Check for Perfect Score badge before clearing state
+    const checkPerfectScoreBadge = async () => {
+      if (user && questionsAnswered > 0 && correctAnswersInSession === questionsAnswered) {
+        const accuracy = 100;
+        try {
+          const response = await fetch(config.BADGE_ENDPOINTS.CHECK_BADGES, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${authService.getToken()}`,
+            },
+            body: JSON.stringify({
+              type: 'PERFECT_SCORE',
+              data: { accuracy, gameType: (currentGame || 'unknown').replace('-review', '') },
+            }),
+          });
+          if (response.ok) {
+            const badgeData = await response.json();
+            if (badgeData.success && badgeData.data?.length > 0 && onBadgeEarned) {
+              setBadgeRefreshTrigger(prev => prev + 1);
+              badgeData.data.forEach((badge: Badge, index: number) => {
+                setTimeout(() => onBadgeEarned(badge), index * 2000);
+              });
+            }
+          }
+        } catch (err) {
+          console.error('Error checking Perfect Score badge:', err);
+        }
+      }
+    };
+    checkPerfectScoreBadge();
+
     // Clear saved game when ending
     clearSavedGame();
-    
-    // Don't refresh badges on every game end - only when badges are earned
-    // setBadgeRefreshTrigger(prev => prev + 1);
-    
+
     // Clear all game state
     setCurrentGame(null);
     setCurrentQuestion(null);
@@ -305,7 +335,8 @@ const Games: React.FC<GamesProps> = ({ user, onBadgeEarned }) => {
     setLoading(false);
     setRetryCount(0);
     setRecentlyAskedWords([]); // Clear recently asked words
-  }, [clearSavedGame]);
+    setCorrectAnswersInSession(0);
+  }, [clearSavedGame, user, questionsAnswered, correctAnswersInSession, currentGame, onBadgeEarned]);
 
   // Save game state to localStorage
   const saveGameState = useCallback(() => {
@@ -915,6 +946,7 @@ const Games: React.FC<GamesProps> = ({ user, onBadgeEarned }) => {
     setScore(0);
     setStreak(0);
     setQuestionsAnswered(0);
+    setCorrectAnswersInSession(0);
     setWordLadderStep(0); // Initialize word ladder step (0-based, displays as Step 1)
     console.log('🪜 Word Ladder: Game started, initializing step to 0 (displays as Step 1)');
     setGameStarted(true);
@@ -969,6 +1001,7 @@ const Games: React.FC<GamesProps> = ({ user, onBadgeEarned }) => {
       setStreak((prevStreak: number) => isCorrect ? prevStreak + 1 : 0);
       
       if (isCorrect) {
+        setCorrectAnswersInSession((prev: number) => prev + 1);
         // Word Ladder gets bonus points for climbing and advances step
         if (currentGame === 'word-ladder') {
           setWordLadderStep((prevStep: number) => {
