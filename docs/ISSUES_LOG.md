@@ -185,3 +185,37 @@ None yet.
 
 ---
 
+## Issue: Jest fails on Node.js 25.2+ with localStorage SecurityError
+
+**Date:** 2026-04-13  
+**Severity:** Medium (blocks `npm test` until fixed)  
+**Status:** Resolved in repo
+
+### Problem
+Running Jest with `testEnvironment: 'node'` threw: `SecurityError: Cannot initialize local storage without a --localstorage-file path` (Node experimental Web Storage).
+
+### Resolution
+Set `NODE_OPTIONS=--no-experimental-webstorage` on the backend `test` script in `package.json` so Jest runs without requiring a localstorage file. Alternatively upgrade Node past the regression or use `node --localstorage-file=...` per Node release notes.
+
+### Prevention
+Keep backend tests runnable on current LTS/Current Node; document required `NODE_OPTIONS` in `TESTING_README.md` if the flag remains necessary.
+
+---
+
+## Issue: CRA `npm start` / `build` fails on Node.js 25+ (localStorage SecurityError)
+
+**Date:** 2026-04-13  
+**Severity:** High (blocks local frontend dev until fixed)  
+**Status:** Resolved in repo
+
+### Problem
+`react-scripts start` failed during compile with `SecurityError: Cannot initialize local storage without a --localstorage-file path`, triggered from `html-webpack-plugin` when Node’s experimental Web Storage API is enabled (same class of issue as Jest on Node 25+).
+
+### Resolution
+Set `NODE_OPTIONS=--no-experimental-webstorage` on the frontend `start`, `build`, and `test` scripts in `frontend/package.json` (mirrors backend test fix).
+
+### Prevention
+When upgrading Node on this project, smoke-test `npm start` and `npm test` in `frontend/`; if Web Storage errors appear, keep or adjust `NODE_OPTIONS` per Node release notes.
+
+---
+

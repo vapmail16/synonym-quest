@@ -65,6 +65,13 @@ Then open: http://localhost:3000 (frontend) and http://localhost:3001 (backend h
 - Click "Sign In" → "Create Account"
 - Any email, username, password (6+ chars)
 
+**Developer: reset a user password (DB)** (uses `backend/.env`):
+```bash
+cd backend
+npm run reset-password -- <email>           # random password printed once
+npm run reset-password -- <email> <newPass>  # set explicit password
+```
+
 ---
 
 ## 🧪 Test Scenarios

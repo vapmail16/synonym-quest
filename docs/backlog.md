@@ -5,8 +5,20 @@
 - ✅ **User Authentication**: Complete with user-specific progress tracking
 - ✅ **Backend Infrastructure**: PostgreSQL, APIs, user progress tracking
 - ✅ **Frontend Core**: React app with responsive design
+- ✅ **11+ Maths (practice)**: Topics + MCQ + explanations + inline SVG in DB (`npm run seed:math`); **11+ Maths** nav after sign-in
 - ❌ **PWA Features**: Missing service worker, manifest, offline support
 - ❌ **Enhanced UX**: Missing hints, achievements, advanced analytics
+
+---
+
+## 📐 **11+ Maths — Planned (after practice MVP)**
+
+*Deferred on purpose: ship content + browsing first.*
+
+- [ ] **Timed exams / practice papers** — fixed-length sessions, clock, submit all
+- [ ] **Games mode** — speed rounds, streak scoring, maths badges tied to progress
+- [ ] **Progress persistence** — per-user attempts, weak topics, spaced repetition
+- [ ] **Optional** — composite DB unique index on `(math_topic_id, external_id)` if duplicate seeds become an issue (removed from Sequelize model for pg-mem test compatibility)
 
 ---
 

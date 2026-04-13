@@ -16,6 +16,7 @@ import { wordController } from './controllers/WordController';
 import { quizController } from './controllers/QuizController';
 import { gameController } from './controllers/GameController';
 import { badgeController } from './controllers/BadgeController';
+import { mathController } from './controllers/MathController';
 import authController from './controllers/AuthController';
 
 // Routes
@@ -24,6 +25,7 @@ app.use('/api/words', wordController.getRouter());
 app.use('/api/quiz', quizController.getRouter());
 app.use('/api/games', gameController.getRouter());
 app.use('/api/badges', badgeController.getRouter());
+app.use('/api/math', mathController.getRouter());
 
 // Health check endpoint
 app.get('/health', (req, res) => {

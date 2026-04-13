@@ -1,0 +1,2546 @@
+{
+  "meta": {
+    "title": "11+ Grammar School Maths - Practice Question Banks",
+    "exam_type": "11+ Grammar School Entrance",
+    "subject": "Mathematics",
+    "version": "1.0",
+    "source": "Derived from Practice Paper 7, Questions 16,17,27,31,37,39,50",
+    "total_questions": 70,
+    "questions_per_bank": 10,
+    "image_handling": {
+      "strategy": "SVG strings embedded inline as svg_data. Recommended production flow:",
+      "steps": [
+        "1. At build time, parse svg_data from each question",
+        "2. Render SVG to PNG at 400x400px (use sharp/svgexport/Inkscape CLI)",
+        "3. Upload PNG to S3 at the suggested_s3_key path",
+        "4. Store S3 URL in app DB against question_id",
+        "5. At runtime, app fetches image URL from DB and displays"
+      ],
+      "inline_fallback": "svg_data can also be used directly: <img src='data:image/svg+xml;base64,...'/>"
+    },
+    "schema_notes": {
+      "id": "Unique question ID e.g. comb_001",
+      "question_text": "Full question text (use \\n for line breaks)",
+      "image.required": "boolean",
+      "image.svg_data": "Full SVG string — render or convert to PNG for display",
+      "image.suggested_s3_key": "Suggested S3 path once converted to PNG",
+      "image.alt_text": "Accessibility text describing the image",
+      "options": "Array of {label: A-E, value: answer text}",
+      "correct_answer": "Letter of correct option",
+      "explanation": "Full step-by-step explanation shown after answering",
+      "working": "One-line working summary"
+    }
+  },
+  "question_banks": [
+    {
+      "bank_id": "combinations_counting",
+      "topic": "Combinations and Counting",
+      "source_q": "Q17",
+      "image_required": false,
+      "difficulty": "medium",
+      "skill": "Count pairs from n items where order doesn't matter and repeats allowed. Formula: n(n+1)/2",
+      "questions": [
+        {
+          "id": "comb_001",
+          "question_text": "A ice cream kiosk sells portions with two scoops of flavour.\nIt offers 4 different flavours.\nThe scoops may be the same flavour or different flavours.\n\nFLAVOURS AVAILABLE\n1. Vanilla\n2. Strawberry\n3. Chocolate\n4. Mint\n\nHow many different combinations of flavours does the ice cream kiosk offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "6"
+            },
+            {
+              "label": "B",
+              "value": "8"
+            },
+            {
+              "label": "C",
+              "value": "10"
+            },
+            {
+              "label": "D",
+              "value": "12"
+            },
+            {
+              "label": "E",
+              "value": "16"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT flavours: C(4,2) = 4x3÷2 = 6\n• SAME flavour BOTH SCOOPS: 4 (one for each flavour)\n\nTotal = 6 + 4 = 10\n\nQuick formula: n(n+1)÷2 = 4x5÷2 = 10",
+          "working": "C(4,2)+4 = 6+4 = 10"
+        },
+        {
+          "id": "comb_002",
+          "question_text": "A pizza restaurant sells portions with two scoops of topping.\nIt offers 5 different toppings.\nThe scoops may be the same topping or different toppings.\n\nTOPPINGS AVAILABLE\n1. Cheese\n2. Pepperoni\n3. Mushroom\n4. Pepper\n5. Onion\n\nHow many different combinations of toppings does the pizza restaurant offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "10"
+            },
+            {
+              "label": "B",
+              "value": "15"
+            },
+            {
+              "label": "C",
+              "value": "20"
+            },
+            {
+              "label": "D",
+              "value": "12"
+            },
+            {
+              "label": "E",
+              "value": "8"
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT toppings: C(5,2) = 5x4÷2 = 10\n• SAME topping BOTH SCOOPS: 5 (one for each topping)\n\nTotal = 10 + 5 = 15\n\nQuick formula: n(n+1)÷2 = 5x6÷2 = 15",
+          "working": "C(5,2)+5 = 10+5 = 15"
+        },
+        {
+          "id": "comb_003",
+          "question_text": "A bead shop sells portions with two scoops of colour.\nIt offers 6 different colours.\nThe scoops may be the same colour or different colours.\n\nCOLOURS AVAILABLE\n1. Red\n2. Blue\n3. Green\n4. Yellow\n5. Purple\n6. Pink\n\nHow many different combinations of colours does the bead shop offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "15"
+            },
+            {
+              "label": "B",
+              "value": "18"
+            },
+            {
+              "label": "C",
+              "value": "21"
+            },
+            {
+              "label": "D",
+              "value": "24"
+            },
+            {
+              "label": "E",
+              "value": "12"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT colours: C(6,2) = 6x5÷2 = 15\n• SAME colour BOTH SCOOPS: 6 (one for each colour)\n\nTotal = 15 + 6 = 21\n\nQuick formula: n(n+1)÷2 = 6x7÷2 = 21",
+          "working": "C(6,2)+6 = 15+6 = 21"
+        },
+        {
+          "id": "comb_004",
+          "question_text": "A milkshake bar sells portions with two scoops of flavour.\nIt offers 7 different flavours.\nThe scoops may be the same flavour or different flavours.\n\nFLAVOURS AVAILABLE\n1. Vanilla\n2. Banana\n3. Strawberry\n4. Mango\n5. Mint\n6. Toffee\n7. Caramel\n\nHow many different combinations of flavours does the milkshake bar offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "21"
+            },
+            {
+              "label": "B",
+              "value": "28"
+            },
+            {
+              "label": "C",
+              "value": "35"
+            },
+            {
+              "label": "D",
+              "value": "24"
+            },
+            {
+              "label": "E",
+              "value": "18"
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT flavours: C(7,2) = 7x6÷2 = 21\n• SAME flavour BOTH SCOOPS: 7 (one for each flavour)\n\nTotal = 21 + 7 = 28\n\nQuick formula: n(n+1)÷2 = 7x8÷2 = 28",
+          "working": "C(7,2)+7 = 21+7 = 28"
+        },
+        {
+          "id": "comb_005",
+          "question_text": "A sandwich shop sells portions with two scoops of filling.\nIt offers 8 different fillings.\nThe scoops may be the same filling or different fillings.\n\nFILLINGS AVAILABLE\n1. Cheese\n2. Ham\n3. Tuna\n4. Egg\n5. Chicken\n6. Salami\n7. Turkey\n8. Beef\n\nHow many different combinations of fillings does the sandwich shop offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "36"
+            },
+            {
+              "label": "B",
+              "value": "28"
+            },
+            {
+              "label": "C",
+              "value": "40"
+            },
+            {
+              "label": "D",
+              "value": "32"
+            },
+            {
+              "label": "E",
+              "value": "24"
+            }
+          ],
+          "correct_answer": "A",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT fillings: C(8,2) = 8x7÷2 = 28\n• SAME filling BOTH SCOOPS: 8 (one for each filling)\n\nTotal = 28 + 8 = 36\n\nQuick formula: n(n+1)÷2 = 8x9÷2 = 36",
+          "working": "C(8,2)+8 = 28+8 = 36"
+        },
+        {
+          "id": "comb_006",
+          "question_text": "A gelato stand sells portions with two scoops of flavour.\nIt offers 3 different flavours.\nThe scoops may be the same flavour or different flavours.\n\nFLAVOURS AVAILABLE\n1. Vanilla\n2. Chocolate\n3. Lemon\n\nHow many different combinations of flavours does the gelato stand offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "4"
+            },
+            {
+              "label": "B",
+              "value": "5"
+            },
+            {
+              "label": "C",
+              "value": "6"
+            },
+            {
+              "label": "D",
+              "value": "9"
+            },
+            {
+              "label": "E",
+              "value": "3"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT flavours: C(3,2) = 3x2÷2 = 3\n• SAME flavour BOTH SCOOPS: 3 (one for each flavour)\n\nTotal = 3 + 3 = 6\n\nQuick formula: n(n+1)÷2 = 3x4÷2 = 6",
+          "working": "C(3,2)+3 = 3+3 = 6"
+        },
+        {
+          "id": "comb_007",
+          "question_text": "A paint shop sells portions with two scoops of colour.\nIt offers 9 different colours.\nThe scoops may be the same colour or different colours.\n\nCOLOURS AVAILABLE\n1. Colour 1\n2. Colour 2\n3. Colour 3\n4. Colour 4\n5. Colour 5\n6. Colour 6\n7. Colour 7\n8. Colour 8\n9. Colour 9\n\nHow many different combinations of colours does the paint shop offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "40"
+            },
+            {
+              "label": "B",
+              "value": "36"
+            },
+            {
+              "label": "C",
+              "value": "45"
+            },
+            {
+              "label": "D",
+              "value": "48"
+            },
+            {
+              "label": "E",
+              "value": "42"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT colours: C(9,2) = 9x8÷2 = 36\n• SAME colour BOTH SCOOPS: 9 (one for each colour)\n\nTotal = 36 + 9 = 45\n\nQuick formula: n(n+1)÷2 = 9x10÷2 = 45",
+          "working": "C(9,2)+9 = 36+9 = 45"
+        },
+        {
+          "id": "comb_008",
+          "question_text": "A smoothie bar sells portions with two scoops of ingredient.\nIt offers 5 different ingredients.\nThe scoops may be the same ingredient or different ingredients.\n\nINGREDIENTS AVAILABLE\n1. Mango\n2. Berry\n3. Banana\n4. Peach\n5. Kiwi\n\nHow many different combinations of ingredients does the smoothie bar offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "10"
+            },
+            {
+              "label": "B",
+              "value": "12"
+            },
+            {
+              "label": "C",
+              "value": "15"
+            },
+            {
+              "label": "D",
+              "value": "20"
+            },
+            {
+              "label": "E",
+              "value": "8"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT ingredients: C(5,2) = 5x4÷2 = 10\n• SAME ingredient BOTH SCOOPS: 5 (one for each ingredient)\n\nTotal = 10 + 5 = 15\n\nQuick formula: n(n+1)÷2 = 5x6÷2 = 15",
+          "working": "C(5,2)+5 = 10+5 = 15"
+        },
+        {
+          "id": "comb_009",
+          "question_text": "A yogurt counter sells portions with two scoops of flavour.\nIt offers 4 different flavours.\nThe scoops may be the same flavour or different flavours.\n\nFLAVOURS AVAILABLE\n1. Plain\n2. Vanilla\n3. Blueberry\n4. Strawberry\n\nHow many different combinations of flavours does the yogurt counter offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "8"
+            },
+            {
+              "label": "B",
+              "value": "10"
+            },
+            {
+              "label": "C",
+              "value": "12"
+            },
+            {
+              "label": "D",
+              "value": "6"
+            },
+            {
+              "label": "E",
+              "value": "16"
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT flavours: C(4,2) = 4x3÷2 = 6\n• SAME flavour BOTH SCOOPS: 4 (one for each flavour)\n\nTotal = 6 + 4 = 10\n\nQuick formula: n(n+1)÷2 = 4x5÷2 = 10",
+          "working": "C(4,2)+4 = 6+4 = 10"
+        },
+        {
+          "id": "comb_010",
+          "question_text": "A pancake cafe sells portions with two scoops of topping.\nIt offers 6 different toppings.\nThe scoops may be the same topping or different toppings.\n\nTOPPINGS AVAILABLE\n1. Maple\n2. Honey\n3. Chocolate\n4. Strawberry\n5. Blueberry\n6. Lemon\n\nHow many different combinations of toppings does the pancake cafe offer?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "18"
+            },
+            {
+              "label": "B",
+              "value": "15"
+            },
+            {
+              "label": "C",
+              "value": "24"
+            },
+            {
+              "label": "D",
+              "value": "21"
+            },
+            {
+              "label": "E",
+              "value": "12"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "Split into two cases:\n• TWO DIFFERENT toppings: C(6,2) = 6x5÷2 = 15\n• SAME topping BOTH SCOOPS: 6 (one for each topping)\n\nTotal = 15 + 6 = 21\n\nQuick formula: n(n+1)÷2 = 6x7÷2 = 21",
+          "working": "C(6,2)+6 = 15+6 = 21"
+        }
+      ]
+    },
+    {
+      "bank_id": "division_remainder",
+      "topic": "Division with Remainder",
+      "source_q": "Q16",
+      "image_required": false,
+      "difficulty": "medium",
+      "skill": "Remainder must be LESS THAN divisor. Given remainder r, valid divisors are > r.",
+      "questions": [
+        {
+          "id": "rem_001",
+          "question_text": "Ravi divides a large number by a smaller number.\nThe remainder is 5.\n\nWhich of these numbers could Ravi have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2"
+            },
+            {
+              "label": "B",
+              "value": "3"
+            },
+            {
+              "label": "C",
+              "value": "4"
+            },
+            {
+              "label": "D",
+              "value": "5"
+            },
+            {
+              "label": "E",
+              "value": "6"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 5, so the divisor must be GREATER than 5.\n\nRemainder 5 → divisor must be > 5. Only 6 satisfies this.\n\nExample check: if you divide by 5, possible remainders are only 0 to 4 — never 5 itself.",
+          "working": "Remainder=5 → Divisor must be > 5"
+        },
+        {
+          "id": "rem_002",
+          "question_text": "Priya divides a large number by a smaller number.\nThe remainder is 3.\n\nWhich of these numbers could Priya have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2"
+            },
+            {
+              "label": "B",
+              "value": "3"
+            },
+            {
+              "label": "C",
+              "value": "5"
+            },
+            {
+              "label": "D",
+              "value": "8"
+            },
+            {
+              "label": "E",
+              "value": "1"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 3, so the divisor must be GREATER than 3.\n\nRemainder 3 → divisor must be > 3. Options 5 and 8 both work; 5 is the smallest valid option shown as the answer here.\n\nExample check: if you divide by 3, possible remainders are only 0 to 2 — never 3 itself.",
+          "working": "Remainder=3 → Divisor must be > 3"
+        },
+        {
+          "id": "rem_003",
+          "question_text": "James divides a large number by a smaller number.\nThe remainder is 7.\n\nWhich of these numbers could James have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "4"
+            },
+            {
+              "label": "B",
+              "value": "5"
+            },
+            {
+              "label": "C",
+              "value": "6"
+            },
+            {
+              "label": "D",
+              "value": "7"
+            },
+            {
+              "label": "E",
+              "value": "9"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 7, so the divisor must be GREATER than 7.\n\nRemainder 7 → divisor must be > 7. Only 9 qualifies.\n\nExample check: if you divide by 7, possible remainders are only 0 to 6 — never 7 itself.",
+          "working": "Remainder=7 → Divisor must be > 7"
+        },
+        {
+          "id": "rem_004",
+          "question_text": "Sofia divides a large number by a smaller number.\nThe remainder is 4.\n\nWhich of these numbers could Sofia have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2"
+            },
+            {
+              "label": "B",
+              "value": "3"
+            },
+            {
+              "label": "C",
+              "value": "4"
+            },
+            {
+              "label": "D",
+              "value": "7"
+            },
+            {
+              "label": "E",
+              "value": "1"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 4, so the divisor must be GREATER than 4.\n\nRemainder 4 → divisor > 4. Only 7 qualifies here.\n\nExample check: if you divide by 4, possible remainders are only 0 to 3 — never 4 itself.",
+          "working": "Remainder=4 → Divisor must be > 4"
+        },
+        {
+          "id": "rem_005",
+          "question_text": "Amir divides a large number by a smaller number.\nThe remainder is 6.\n\nWhich of these numbers could Amir have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "3"
+            },
+            {
+              "label": "B",
+              "value": "4"
+            },
+            {
+              "label": "C",
+              "value": "5"
+            },
+            {
+              "label": "D",
+              "value": "6"
+            },
+            {
+              "label": "E",
+              "value": "8"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 6, so the divisor must be GREATER than 6.\n\nRemainder 6 → divisor > 6. Only 8 qualifies.\n\nExample check: if you divide by 6, possible remainders are only 0 to 5 — never 6 itself.",
+          "working": "Remainder=6 → Divisor must be > 6"
+        },
+        {
+          "id": "rem_006",
+          "question_text": "Lily divides a large number by a smaller number.\nThe remainder is 9.\n\nWhich of these numbers could Lily have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "5"
+            },
+            {
+              "label": "B",
+              "value": "7"
+            },
+            {
+              "label": "C",
+              "value": "8"
+            },
+            {
+              "label": "D",
+              "value": "9"
+            },
+            {
+              "label": "E",
+              "value": "11"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 9, so the divisor must be GREATER than 9.\n\nRemainder 9 → divisor must be at least 10. Only 11 qualifies.\n\nExample check: if you divide by 9, possible remainders are only 0 to 8 — never 9 itself.",
+          "working": "Remainder=9 → Divisor must be > 9"
+        },
+        {
+          "id": "rem_007",
+          "question_text": "Tom divides a large number by a smaller number.\nThe remainder is 2.\n\nWhich of these numbers could Tom have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "1"
+            },
+            {
+              "label": "B",
+              "value": "2"
+            },
+            {
+              "label": "C",
+              "value": "3"
+            },
+            {
+              "label": "D",
+              "value": "4"
+            },
+            {
+              "label": "E",
+              "value": "6"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 2, so the divisor must be GREATER than 2.\n\nRemainder 2 → divisor > 2. The smallest valid option is 3.\n\nExample check: if you divide by 2, possible remainders are only 0 to 1 — never 2 itself.",
+          "working": "Remainder=2 → Divisor must be > 2"
+        },
+        {
+          "id": "rem_008",
+          "question_text": "Emma divides a large number by a smaller number.\nThe remainder is 8.\n\nWhich of these numbers could Emma have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "3"
+            },
+            {
+              "label": "B",
+              "value": "5"
+            },
+            {
+              "label": "C",
+              "value": "6"
+            },
+            {
+              "label": "D",
+              "value": "8"
+            },
+            {
+              "label": "E",
+              "value": "10"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 8, so the divisor must be GREATER than 8.\n\nRemainder 8 → divisor > 8. Only 10 satisfies this.\n\nExample check: if you divide by 8, possible remainders are only 0 to 7 — never 8 itself.",
+          "working": "Remainder=8 → Divisor must be > 8"
+        },
+        {
+          "id": "rem_009",
+          "question_text": "Max divides a large number by a smaller number.\nThe remainder is 5.\n\nWhich of these numbers could Max have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2"
+            },
+            {
+              "label": "B",
+              "value": "3"
+            },
+            {
+              "label": "C",
+              "value": "4"
+            },
+            {
+              "label": "D",
+              "value": "5"
+            },
+            {
+              "label": "E",
+              "value": "7"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 5, so the divisor must be GREATER than 5.\n\nRemainder 5 → divisor > 5. Only 7 > 5 here.\n\nExample check: if you divide by 5, possible remainders are only 0 to 4 — never 5 itself.",
+          "working": "Remainder=5 → Divisor must be > 5"
+        },
+        {
+          "id": "rem_010",
+          "question_text": "Zara divides a large number by a smaller number.\nThe remainder is 11.\n\nWhich of these numbers could Zara have divided by?",
+          "image": {
+            "required": false
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "7"
+            },
+            {
+              "label": "B",
+              "value": "9"
+            },
+            {
+              "label": "C",
+              "value": "10"
+            },
+            {
+              "label": "D",
+              "value": "11"
+            },
+            {
+              "label": "E",
+              "value": "13"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Key rule: REMAINDER must always be LESS THAN the DIVISOR.\n\nThe remainder is 11, so the divisor must be GREATER than 11.\n\nRemainder 11 → divisor must exceed 11. Only 13 qualifies.\n\nExample check: if you divide by 11, possible remainders are only 0 to 10 — never 11 itself.",
+          "working": "Remainder=11 → Divisor must be > 11"
+        }
+      ]
+    },
+    {
+      "bank_id": "painted_cubes",
+      "topic": "3D Painted Cubes",
+      "source_q": "Q27",
+      "image_required": true,
+      "difficulty": "hard",
+      "skill": "Painted faces = 6 minus number of neighbouring cubes. Count cubes with exactly n faces painted.",
+      "questions": [
+        {
+          "id": "cube_001",
+          "question_text": "The diagram shows 9 small wooden cubes arranged flat (a 3x3 square).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 2 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"160\" height=\"200\" viewBox=\"0 0 160 200\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"80\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">3x3 square (9 cubes)</text><rect x=\"20\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"20\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><text x=\"80\" y=\"196\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_001.png",
+            "alt_text": "Top-down grid of 9 cubes arranged as a 3x3 square. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "0"
+            },
+            {
+              "label": "B",
+              "value": "1"
+            },
+            {
+              "label": "C",
+              "value": "2"
+            },
+            {
+              "label": "D",
+              "value": "3"
+            },
+            {
+              "label": "E",
+              "value": "4"
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this 3x3 square:\n1 cube(s) with 2 faces, 4 cube(s) with 3 faces, 4 cube(s) with 4 faces\n\nCubes with exactly 2 faces painted = 1",
+          "working": "Count cubes where 6-neighbours=2 → 1"
+        },
+        {
+          "id": "cube_002",
+          "question_text": "The diagram shows 8 small wooden cubes arranged flat (a 2x4 rectangle).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 3 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"200\" height=\"160\" viewBox=\"0 0 200 160\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"100\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">2x4 rectangle (8 cubes)</text><rect x=\"20\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"140\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"140\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><text x=\"100\" y=\"156\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_002.png",
+            "alt_text": "Top-down grid of 8 cubes arranged as a 2x4 rectangle. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2"
+            },
+            {
+              "label": "B",
+              "value": "3"
+            },
+            {
+              "label": "C",
+              "value": "4"
+            },
+            {
+              "label": "D",
+              "value": "5"
+            },
+            {
+              "label": "E",
+              "value": "6"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this 2x4 rectangle:\n4 cube(s) with 3 faces, 4 cube(s) with 4 faces\n\nCubes with exactly 3 faces painted = 4",
+          "working": "Count cubes where 6-neighbours=3 → 4"
+        },
+        {
+          "id": "cube_003",
+          "question_text": "The diagram shows 5 small wooden cubes arranged flat (a plus shape).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 3 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"160\" height=\"200\" viewBox=\"0 0 160 200\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"80\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">plus shape (5 cubes)</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><rect x=\"60\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><text x=\"80\" y=\"196\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_003.png",
+            "alt_text": "Top-down grid of 5 cubes arranged as a plus shape. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "0"
+            },
+            {
+              "label": "B",
+              "value": "1"
+            },
+            {
+              "label": "C",
+              "value": "2"
+            },
+            {
+              "label": "D",
+              "value": "3"
+            },
+            {
+              "label": "E",
+              "value": "4"
+            }
+          ],
+          "correct_answer": "A",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this plus shape:\n1 cube(s) with 2 faces, 4 cube(s) with 5 faces\n\nCubes with exactly 3 faces painted = 0",
+          "working": "Count cubes where 6-neighbours=3 → 0"
+        },
+        {
+          "id": "cube_004",
+          "question_text": "The diagram shows 8 small wooden cubes arranged flat (a L-extended).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 4 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"160\" height=\"200\" viewBox=\"0 0 160 200\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"80\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">L-extended (8 cubes)</text><rect x=\"20\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"20\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><text x=\"80\" y=\"196\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_004.png",
+            "alt_text": "Top-down grid of 8 cubes arranged as a L-extended. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "3"
+            },
+            {
+              "label": "B",
+              "value": "4"
+            },
+            {
+              "label": "C",
+              "value": "5"
+            },
+            {
+              "label": "D",
+              "value": "6"
+            },
+            {
+              "label": "E",
+              "value": "7"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this L-extended:\n1 cube(s) with 2 faces, 2 cube(s) with 3 faces, 5 cube(s) with 4 faces\n\nCubes with exactly 4 faces painted = 5",
+          "working": "Count cubes where 6-neighbours=4 → 5"
+        },
+        {
+          "id": "cube_005",
+          "question_text": "The diagram shows 12 small wooden cubes arranged flat (a 4x3 rectangle).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 3 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"80\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">4x3 rectangle (12 cubes)</text><rect x=\"20\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"20\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"60\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"20\" y=\"165\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"190\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"165\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"190\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"165\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"190\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><text x=\"80\" y=\"236\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_005.png",
+            "alt_text": "Top-down grid of 12 cubes arranged as a 4x3 rectangle. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "4"
+            },
+            {
+              "label": "B",
+              "value": "5"
+            },
+            {
+              "label": "C",
+              "value": "6"
+            },
+            {
+              "label": "D",
+              "value": "7"
+            },
+            {
+              "label": "E",
+              "value": "8"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this 4x3 rectangle:\n2 cube(s) with 2 faces, 6 cube(s) with 3 faces, 4 cube(s) with 4 faces\n\nCubes with exactly 3 faces painted = 6",
+          "working": "Count cubes where 6-neighbours=3 → 6"
+        },
+        {
+          "id": "cube_006",
+          "question_text": "The diagram shows 12 small wooden cubes arranged flat (a 3x4 rectangle).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 3 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"200\" height=\"200\" viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"100\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">3x4 rectangle (12 cubes)</text><rect x=\"20\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"140\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"140\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"20\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"140\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><text x=\"100\" y=\"196\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_006.png",
+            "alt_text": "Top-down grid of 12 cubes arranged as a 3x4 rectangle. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "4"
+            },
+            {
+              "label": "B",
+              "value": "5"
+            },
+            {
+              "label": "C",
+              "value": "6"
+            },
+            {
+              "label": "D",
+              "value": "7"
+            },
+            {
+              "label": "E",
+              "value": "8"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this 3x4 rectangle:\n2 cube(s) with 2 faces, 6 cube(s) with 3 faces, 4 cube(s) with 4 faces\n\nCubes with exactly 3 faces painted = 6",
+          "working": "Count cubes where 6-neighbours=3 → 6"
+        },
+        {
+          "id": "cube_007",
+          "question_text": "The diagram shows 8 small wooden cubes arranged flat (a octagon-like).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 4 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"200\" height=\"200\" viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"100\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">octagon-like (8 cubes)</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"100\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"140\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><rect x=\"60\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"100\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><text x=\"100\" y=\"196\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_007.png",
+            "alt_text": "Top-down grid of 8 cubes arranged as a octagon-like. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2"
+            },
+            {
+              "label": "B",
+              "value": "3"
+            },
+            {
+              "label": "C",
+              "value": "4"
+            },
+            {
+              "label": "D",
+              "value": "5"
+            },
+            {
+              "label": "E",
+              "value": "6"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this octagon-like:\n2 cube(s) with 2 faces, 4 cube(s) with 4 faces, 2 cube(s) with 5 faces\n\nCubes with exactly 4 faces painted = 4",
+          "working": "Count cubes where 6-neighbours=4 → 4"
+        },
+        {
+          "id": "cube_008",
+          "question_text": "The diagram shows 15 small wooden cubes arranged flat (a 3x5 rectangle).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 3 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"240\" height=\"200\" viewBox=\"0 0 240 200\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"120\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">3x5 rectangle (15 cubes)</text><rect x=\"20\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"140\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"180\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"200\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"140\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"180\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"200\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"20\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"140\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"180\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"200\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><text x=\"120\" y=\"196\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_008.png",
+            "alt_text": "Top-down grid of 15 cubes arranged as a 3x5 rectangle. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "6"
+            },
+            {
+              "label": "B",
+              "value": "7"
+            },
+            {
+              "label": "C",
+              "value": "8"
+            },
+            {
+              "label": "D",
+              "value": "9"
+            },
+            {
+              "label": "E",
+              "value": "10"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this 3x5 rectangle:\n3 cube(s) with 2 faces, 8 cube(s) with 3 faces, 4 cube(s) with 4 faces\n\nCubes with exactly 3 faces painted = 8",
+          "working": "Count cubes where 6-neighbours=3 → 8"
+        },
+        {
+          "id": "cube_009",
+          "question_text": "The diagram shows 18 small wooden cubes arranged flat (a 3x6 rectangle).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 3 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"280\" height=\"200\" viewBox=\"0 0 280 200\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"140\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">3x6 rectangle (18 cubes)</text><rect x=\"20\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"140\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"180\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"200\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"220\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"240\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"140\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"180\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"200\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"220\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"240\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"20\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"140\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"180\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"200\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"220\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"240\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><text x=\"140\" y=\"196\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_009.png",
+            "alt_text": "Top-down grid of 18 cubes arranged as a 3x6 rectangle. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "8"
+            },
+            {
+              "label": "B",
+              "value": "9"
+            },
+            {
+              "label": "C",
+              "value": "10"
+            },
+            {
+              "label": "D",
+              "value": "11"
+            },
+            {
+              "label": "E",
+              "value": "12"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this 3x6 rectangle:\n4 cube(s) with 2 faces, 10 cube(s) with 3 faces, 4 cube(s) with 4 faces\n\nCubes with exactly 3 faces painted = 10",
+          "working": "Count cubes where 6-neighbours=3 → 10"
+        },
+        {
+          "id": "cube_010",
+          "question_text": "The diagram shows 8 small wooden cubes arranged flat (a T-plus shape).\nThe whole solid is painted red on all exposed surfaces.\n\nHow many of the small cubes have exactly 3 faces painted red?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"200\" height=\"240\" viewBox=\"0 0 200 240\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><text x=\"100\" y=\"17\" text-anchor=\"middle\" font-size=\"12\" fill=\"#555\">T-plus shape (8 cubes)</text><rect x=\"60\" y=\"45\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"70\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><rect x=\"20\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><rect x=\"60\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">2F</text><rect x=\"100\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"140\" y=\"85\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"160\" y=\"110\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><rect x=\"60\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">3F</text><rect x=\"100\" y=\"125\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"120\" y=\"150\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">4F</text><rect x=\"60\" y=\"165\" width=\"40\" height=\"40\" fill=\"#b0c4de\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"80\" y=\"190\" text-anchor=\"middle\" font-size=\"11\" fill=\"#333\">5F</text><text x=\"100\" y=\"236\" text-anchor=\"middle\" font-size=\"10\" fill=\"#888\">Top-down view. F = painted faces per cube.</text></svg>",
+            "suggested_s3_key": "11plus/math/painted_cubes/cube_010.png",
+            "alt_text": "Top-down grid of 8 cubes arranged as a T-plus shape. Each cube shows its face count."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "0"
+            },
+            {
+              "label": "B",
+              "value": "1"
+            },
+            {
+              "label": "C",
+              "value": "2"
+            },
+            {
+              "label": "D",
+              "value": "3"
+            },
+            {
+              "label": "E",
+              "value": "4"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Painted faces = 6 minus the number of neighbours touching each cube.\n\nIn this T-plus shape:\n1 cube(s) with 2 faces, 2 cube(s) with 3 faces, 1 cube(s) with 4 faces, 4 cube(s) with 5 faces\n\nCubes with exactly 3 faces painted = 2",
+          "working": "Count cubes where 6-neighbours=3 → 2"
+        }
+      ]
+    },
+    {
+      "bank_id": "robot_turns",
+      "topic": "Turns and Angles in Paths",
+      "source_q": "Q31",
+      "image_required": true,
+      "difficulty": "medium",
+      "skill": "Identify turns > 90 degrees (obtuse). Sharp V-shape at a point = turn > 90 degrees. Square corner = exactly 90 degrees.",
+      "questions": [
+        {
+          "id": "robot_001",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"155,255 155,185 155,135 205,135 235,95 265,135 305,135 305,70 305,25\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"155\" y1=\"277\" x2=\"155\" y2=\"258\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"155\" y=\"291\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"305\" y1=\"28\" x2=\"305\" y2=\"10\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"305\" y=\"5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"155\" cy=\"185\" r=\"5\" fill=\"#333\"/><text x=\"142\" y=\"190\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"155\" cy=\"135\" r=\"5\" fill=\"#333\"/><text x=\"142\" y=\"140\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"205\" cy=\"135\" r=\"5\" fill=\"#333\"/><text x=\"192\" y=\"140\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"235\" cy=\"95\" r=\"5\" fill=\"#333\"/><text x=\"222\" y=\"100\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"265\" cy=\"135\" r=\"5\" fill=\"#333\"/><text x=\"252\" y=\"140\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_001.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point C."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: Right-angle turn (90 degrees)\nPoint B: Right-angle turn (90 degrees)\nPoint C: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\nPoint D: Right-angle turn (90 degrees)\nPoint E: Right-angle turn (90 degrees)\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at C is acute → turn angle > 90 degrees"
+        },
+        {
+          "id": "robot_002",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"80,255 80,175 140,105 80,55 80,20 165,20 245,20 245,55 280,25\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"80\" y1=\"277\" x2=\"80\" y2=\"258\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"80\" y=\"291\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"280\" y1=\"28\" x2=\"280\" y2=\"10\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"280\" y=\"5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"80\" cy=\"175\" r=\"5\" fill=\"#333\"/><text x=\"67\" y=\"180\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"140\" cy=\"105\" r=\"5\" fill=\"#333\"/><text x=\"127\" y=\"110\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"80\" cy=\"55\" r=\"5\" fill=\"#333\"/><text x=\"67\" y=\"60\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"80\" cy=\"20\" r=\"5\" fill=\"#333\"/><text x=\"67\" y=\"25\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"165\" cy=\"20\" r=\"5\" fill=\"#333\"/><text x=\"152\" y=\"25\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_002.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point A."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "A",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\nPoint B: Right-angle turn (90 degrees)\nPoint C: Right-angle turn (90 degrees)\nPoint D: Right-angle turn (90 degrees)\nPoint E: Right-angle turn (90 degrees)\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at A is acute → turn angle > 90 degrees"
+        },
+        {
+          "id": "robot_003",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"65,255 65,175 65,140 130,80 65,45 65,15 170,15 250,15 285,40\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"65\" y1=\"277\" x2=\"65\" y2=\"258\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"65\" y=\"291\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"285\" y1=\"43\" x2=\"285\" y2=\"25\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"285\" y=\"20\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"65\" cy=\"175\" r=\"5\" fill=\"#333\"/><text x=\"52\" y=\"180\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"65\" cy=\"140\" r=\"5\" fill=\"#333\"/><text x=\"52\" y=\"145\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"130\" cy=\"80\" r=\"5\" fill=\"#333\"/><text x=\"117\" y=\"85\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"65\" cy=\"45\" r=\"5\" fill=\"#333\"/><text x=\"52\" y=\"50\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"65\" cy=\"15\" r=\"5\" fill=\"#333\"/><text x=\"52\" y=\"20\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_003.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point B."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: Right-angle turn (90 degrees)\nPoint B: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\nPoint C: Right-angle turn (90 degrees)\nPoint D: Right-angle turn (90 degrees)\nPoint E: Right-angle turn (90 degrees)\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at B is acute → turn angle > 90 degrees"
+        },
+        {
+          "id": "robot_004",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"80,255 80,185 165,185 165,115 165,75 215,35 165,15 165,5 290,5\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"80\" y1=\"277\" x2=\"80\" y2=\"258\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"80\" y=\"291\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"290\" y1=\"8\" x2=\"290\" y2=\"-10\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"290\" y=\"-15\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"80\" cy=\"185\" r=\"5\" fill=\"#333\"/><text x=\"67\" y=\"190\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"165\" cy=\"185\" r=\"5\" fill=\"#333\"/><text x=\"152\" y=\"190\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"165\" cy=\"115\" r=\"5\" fill=\"#333\"/><text x=\"152\" y=\"120\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"165\" cy=\"75\" r=\"5\" fill=\"#333\"/><text x=\"152\" y=\"80\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"215\" cy=\"35\" r=\"5\" fill=\"#333\"/><text x=\"202\" y=\"40\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_004.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point D."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: Right-angle turn (90 degrees)\nPoint B: Right-angle turn (90 degrees)\nPoint C: Right-angle turn (90 degrees)\nPoint D: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\nPoint E: Right-angle turn (90 degrees)\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at D is acute → turn angle > 90 degrees"
+        },
+        {
+          "id": "robot_005",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"60,260 60,195 60,145 145,145 205,145 205,75 265,35 205,15 205,5\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"60\" y1=\"282\" x2=\"60\" y2=\"263\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"60\" y=\"296\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"205\" y1=\"8\" x2=\"205\" y2=\"-10\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"205\" y=\"-15\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"60\" cy=\"195\" r=\"5\" fill=\"#333\"/><text x=\"47\" y=\"200\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"60\" cy=\"145\" r=\"5\" fill=\"#333\"/><text x=\"47\" y=\"150\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"145\" cy=\"145\" r=\"5\" fill=\"#333\"/><text x=\"132\" y=\"150\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"205\" cy=\"145\" r=\"5\" fill=\"#333\"/><text x=\"192\" y=\"150\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"205\" cy=\"75\" r=\"5\" fill=\"#333\"/><text x=\"192\" y=\"80\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_005.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point E."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: Right-angle turn (90 degrees)\nPoint B: Right-angle turn (90 degrees)\nPoint C: Right-angle turn (90 degrees)\nPoint D: Right-angle turn (90 degrees)\nPoint E: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at E is acute → turn angle > 90 degrees"
+        },
+        {
+          "id": "robot_006",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"200,255 200,195 95,195 95,125 160,70 225,125 290,125 290,60 290,25\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"200\" y1=\"277\" x2=\"200\" y2=\"258\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"200\" y=\"291\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"290\" y1=\"28\" x2=\"290\" y2=\"10\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"290\" y=\"5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"200\" cy=\"195\" r=\"5\" fill=\"#333\"/><text x=\"187\" y=\"200\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"95\" cy=\"195\" r=\"5\" fill=\"#333\"/><text x=\"82\" y=\"200\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"95\" cy=\"125\" r=\"5\" fill=\"#333\"/><text x=\"82\" y=\"130\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"160\" cy=\"70\" r=\"5\" fill=\"#333\"/><text x=\"147\" y=\"75\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"225\" cy=\"125\" r=\"5\" fill=\"#333\"/><text x=\"212\" y=\"130\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_006.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point C."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: Right-angle turn (90 degrees)\nPoint B: Right-angle turn (90 degrees)\nPoint C: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\nPoint D: Right-angle turn (90 degrees)\nPoint E: Right-angle turn (90 degrees)\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at C is acute → turn angle > 90 degrees"
+        },
+        {
+          "id": "robot_007",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"60,255 60,185 135,105 205,185 205,115 270,115 270,60 270,30 295,15\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"60\" y1=\"277\" x2=\"60\" y2=\"258\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"60\" y=\"291\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"295\" y1=\"18\" x2=\"295\" y2=\"0\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"295\" y=\"-5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"60\" cy=\"185\" r=\"5\" fill=\"#333\"/><text x=\"47\" y=\"190\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"135\" cy=\"105\" r=\"5\" fill=\"#333\"/><text x=\"122\" y=\"110\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"205\" cy=\"185\" r=\"5\" fill=\"#333\"/><text x=\"192\" y=\"190\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"205\" cy=\"115\" r=\"5\" fill=\"#333\"/><text x=\"192\" y=\"120\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"270\" cy=\"115\" r=\"5\" fill=\"#333\"/><text x=\"257\" y=\"120\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_007.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point B."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: Right-angle turn (90 degrees)\nPoint B: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\nPoint C: Right-angle turn (90 degrees)\nPoint D: Right-angle turn (90 degrees)\nPoint E: Right-angle turn (90 degrees)\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at B is acute → turn angle > 90 degrees"
+        },
+        {
+          "id": "robot_008",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"80,260 80,195 80,145 165,145 245,145 295,90 245,50 245,25 245,5\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"80\" y1=\"282\" x2=\"80\" y2=\"263\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"80\" y=\"296\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"245\" y1=\"8\" x2=\"245\" y2=\"-10\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"245\" y=\"-15\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"80\" cy=\"195\" r=\"5\" fill=\"#333\"/><text x=\"67\" y=\"200\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"80\" cy=\"145\" r=\"5\" fill=\"#333\"/><text x=\"67\" y=\"150\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"165\" cy=\"145\" r=\"5\" fill=\"#333\"/><text x=\"152\" y=\"150\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"245\" cy=\"145\" r=\"5\" fill=\"#333\"/><text x=\"232\" y=\"150\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"295\" cy=\"90\" r=\"5\" fill=\"#333\"/><text x=\"282\" y=\"95\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_008.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point D."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: Right-angle turn (90 degrees)\nPoint B: Right-angle turn (90 degrees)\nPoint C: Right-angle turn (90 degrees)\nPoint D: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\nPoint E: Right-angle turn (90 degrees)\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at D is acute → turn angle > 90 degrees"
+        },
+        {
+          "id": "robot_009",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"165,260 165,195 225,135 165,95 165,55 100,55 35,55 35,25 35,5\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"165\" y1=\"282\" x2=\"165\" y2=\"263\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"165\" y=\"296\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"35\" y1=\"8\" x2=\"35\" y2=\"-10\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"35\" y=\"-15\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"165\" cy=\"195\" r=\"5\" fill=\"#333\"/><text x=\"152\" y=\"200\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"225\" cy=\"135\" r=\"5\" fill=\"#333\"/><text x=\"212\" y=\"140\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"165\" cy=\"95\" r=\"5\" fill=\"#333\"/><text x=\"152\" y=\"100\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"165\" cy=\"55\" r=\"5\" fill=\"#333\"/><text x=\"152\" y=\"60\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"100\" cy=\"55\" r=\"5\" fill=\"#333\"/><text x=\"87\" y=\"60\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_009.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point A."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "A",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\nPoint B: Right-angle turn (90 degrees)\nPoint C: Right-angle turn (90 degrees)\nPoint D: Right-angle turn (90 degrees)\nPoint E: Right-angle turn (90 degrees)\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at A is acute → turn angle > 90 degrees"
+        },
+        {
+          "id": "robot_010",
+          "question_text": "A robot moves along this path from Start to Finish.\nIt turns at points A, B, C, D and E.\n\nAt what point does the robot turn through MORE THAN a right angle?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"340\" height=\"285\" viewBox=\"0 0 340 285\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"6\" refX=\"6\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#333\"/></marker></defs><polyline points=\"60,255 60,190 125,190 125,125 175,75 225,125 290,125 290,65 290,25\" fill=\"none\" stroke=\"#666\" stroke-width=\"5\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><line x1=\"60\" y1=\"277\" x2=\"60\" y2=\"258\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"60\" y=\"291\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Start</text><line x1=\"290\" y1=\"28\" x2=\"290\" y2=\"10\" stroke=\"#333\" stroke-width=\"2\" marker-end=\"url(#arr)\"/><text x=\"290\" y=\"5\" text-anchor=\"middle\" font-size=\"13\" font-weight=\"bold\" fill=\"#333\">Finish</text><circle cx=\"60\" cy=\"190\" r=\"5\" fill=\"#333\"/><text x=\"47\" y=\"195\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">A</text><circle cx=\"125\" cy=\"190\" r=\"5\" fill=\"#333\"/><text x=\"112\" y=\"195\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">B</text><circle cx=\"125\" cy=\"125\" r=\"5\" fill=\"#333\"/><text x=\"112\" y=\"130\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">C</text><circle cx=\"175\" cy=\"75\" r=\"5\" fill=\"#333\"/><text x=\"162\" y=\"80\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">D</text><circle cx=\"225\" cy=\"125\" r=\"5\" fill=\"#333\"/><text x=\"212\" y=\"130\" font-size=\"15\" font-weight=\"bold\" fill=\"#1a3a6b\">E</text></svg>",
+            "suggested_s3_key": "11plus/math/robot_turns/robot_010.png",
+            "alt_text": "Robot path diagram. The sharp V-turn (>90 degrees) occurs at point C."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "A"
+            },
+            {
+              "label": "B",
+              "value": "B"
+            },
+            {
+              "label": "C",
+              "value": "C"
+            },
+            {
+              "label": "D",
+              "value": "D"
+            },
+            {
+              "label": "E",
+              "value": "E"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "A RIGHT-ANGLE turn makes a perfect square corner (90 degrees).\nA turn of MORE than 90 degrees means the path folds back sharply — like a hairpin.\n\nAt each point:\nPoint A: Right-angle turn (90 degrees)\nPoint B: Right-angle turn (90 degrees)\nPoint C: OBTUSE TURN (> 90 degrees) — path makes a sharp pointed V here\nPoint D: Right-angle turn (90 degrees)\nPoint E: Right-angle turn (90 degrees)\n\nKey tip: The turn ANGLE = 180 degrees minus the interior angle of the path. A sharp pointy V shape has an interior angle < 90 degrees, giving a turn > 90 degrees.",
+          "working": "Interior angle at C is acute → turn angle > 90 degrees"
+        }
+      ]
+    },
+    {
+      "bank_id": "shape_decomposition",
+      "topic": "Shape Composition and Decomposition",
+      "source_q": "Q37",
+      "image_required": true,
+      "difficulty": "hard",
+      "skill": "Identify which combination of shapes CANNOT form the given composite shape. Know polygon properties: sides, angles.",
+      "questions": [
+        {
+          "id": "shape_001",
+          "question_text": "The diagram shows an hourglass shape (6 sides).\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"80,30 240,30 200,130 240,230 80,230 120,130\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"160\" y=\"260\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Hourglass (6 sides)</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_001.png",
+            "alt_text": "Diagram of an hourglass shape (6 sides)"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2 triangles and 1 rectangle"
+            },
+            {
+              "label": "B",
+              "value": "4 triangles"
+            },
+            {
+              "label": "C",
+              "value": "2 pentagons"
+            },
+            {
+              "label": "D",
+              "value": "1 rectangle and 2 triangles"
+            },
+            {
+              "label": "E",
+              "value": "2 quadrilaterals"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Each half of the hourglass cut down the middle is a 4-sided shape (quadrilateral), NOT a 5-sided pentagon. 2 pentagons cannot form this shape.",
+          "working": "Identify geometrically impossible combination → Answer C"
+        },
+        {
+          "id": "shape_002",
+          "question_text": "The diagram shows a right-pointing arrow (7 sides).\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"55,75 185,75 185,35 285,130 185,225 185,185 55,185\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"170\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Arrow shape (7 sides)</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_002.png",
+            "alt_text": "Diagram of a right-pointing arrow (7 sides)"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "1 rectangle and 1 triangle"
+            },
+            {
+              "label": "B",
+              "value": "2 trapeziums"
+            },
+            {
+              "label": "C",
+              "value": "1 rectangle and 2 right-angled triangles"
+            },
+            {
+              "label": "D",
+              "value": "3 triangles"
+            },
+            {
+              "label": "E",
+              "value": "2 quadrilaterals"
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "Two trapeziums have only parallel-sided geometry and cannot form the pointed triangular tip of an arrow. All other options can be arranged to make the arrow shape.",
+          "working": "Identify geometrically impossible combination → Answer B"
+        },
+        {
+          "id": "shape_003",
+          "question_text": "The diagram shows a T-shape (8 right-angle sides).\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"55,35 265,35 265,110 185,110 185,235 135,235 135,110 55,110\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"160\" y=\"260\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">T-shape (8 sides)</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_003.png",
+            "alt_text": "Diagram of a T-shape (8 right-angle sides)"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "3 rectangles"
+            },
+            {
+              "label": "B",
+              "value": "2 rectangles"
+            },
+            {
+              "label": "C",
+              "value": "4 squares"
+            },
+            {
+              "label": "D",
+              "value": "2 triangles and 1 rectangle"
+            },
+            {
+              "label": "E",
+              "value": "1 rectangle and 2 squares"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "A T-shape has only right-angle corners. Adding 2 triangles would introduce diagonal edges not present in the T-shape. All other options (rectangles and squares) have only right angles and can form a T.",
+          "working": "Identify geometrically impossible combination → Answer D"
+        },
+        {
+          "id": "shape_004",
+          "question_text": "The diagram shows a plus/cross shape (12 sides).\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"100,35 200,35 200,100 265,100 265,165 200,165 200,230 100,230 100,165 35,165 35,100 100,100\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Cross shape (12 sides)</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_004.png",
+            "alt_text": "Diagram of a plus/cross shape (12 sides)"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "5 squares"
+            },
+            {
+              "label": "B",
+              "value": "1 square and 4 rectangles"
+            },
+            {
+              "label": "C",
+              "value": "4 rectangles"
+            },
+            {
+              "label": "D",
+              "value": "3 hexagons"
+            },
+            {
+              "label": "E",
+              "value": "12 right-angled triangles"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "A cross shape has only 90-degree and 270-degree angles. Hexagons have 120-degree angles — they cannot tile to form a cross shape without gaps or overlaps.",
+          "working": "Identify geometrically impossible combination → Answer D"
+        },
+        {
+          "id": "shape_005",
+          "question_text": "The diagram shows a chevron / V-shape (6 sides).\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"55,60 160,135 265,60 265,95 160,170 55,95\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"160\" y=\"200\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Chevron (6 sides)</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_005.png",
+            "alt_text": "Diagram of a chevron / V-shape (6 sides)"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2 triangles"
+            },
+            {
+              "label": "B",
+              "value": "2 trapeziums"
+            },
+            {
+              "label": "C",
+              "value": "3 circles"
+            },
+            {
+              "label": "D",
+              "value": "2 obtuse triangles"
+            },
+            {
+              "label": "E",
+              "value": "4 triangles"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Circles have curved edges. It is impossible to combine circles to form any shape with straight sides and pointed vertices. All other options use straight-edged shapes that can form the chevron.",
+          "working": "Identify geometrically impossible combination → Answer C"
+        },
+        {
+          "id": "shape_006",
+          "question_text": "The diagram shows an L-shape (6 right-angle sides).\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"55,35 145,35 145,145 265,145 265,225 55,225\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">L-shape (6 sides)</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_006.png",
+            "alt_text": "Diagram of an L-shape (6 right-angle sides)"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2 rectangles"
+            },
+            {
+              "label": "B",
+              "value": "3 squares"
+            },
+            {
+              "label": "C",
+              "value": "1 rectangle and 2 triangles"
+            },
+            {
+              "label": "D",
+              "value": "2 squares and 1 rectangle"
+            },
+            {
+              "label": "E",
+              "value": "6 right-angled triangles"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "An L-shape has only right angles. Triangles have diagonal edges. Adding triangles to a rectangle would change the boundary to include diagonal sides, which the L-shape does not have.",
+          "working": "Identify geometrically impossible combination → Answer C"
+        },
+        {
+          "id": "shape_007",
+          "question_text": "The diagram shows an irregular hexagon (6 sides).\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160,25 265,85 265,195 160,255 55,195 55,85\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"160\" y=\"275\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Irregular hexagon (6 sides)</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_007.png",
+            "alt_text": "Diagram of an irregular hexagon (6 sides)"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "4 triangles"
+            },
+            {
+              "label": "B",
+              "value": "2 quadrilaterals"
+            },
+            {
+              "label": "C",
+              "value": "1 quadrilateral and 2 triangles"
+            },
+            {
+              "label": "D",
+              "value": "3 rhombuses"
+            },
+            {
+              "label": "E",
+              "value": "2 circles"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Circles have curved boundaries. No polygon with straight sides can be formed by combining circles. All other options use straight-edged shapes that can produce a hexagon.",
+          "working": "Identify geometrically impossible combination → Answer E"
+        },
+        {
+          "id": "shape_008",
+          "question_text": "The diagram shows a 4-pointed star shape.\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160,25 193,108 278,108 210,160 235,243 160,190 85,243 110,160 42,108 127,108\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"160\" y=\"268\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">4-pointed star</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_008.png",
+            "alt_text": "Diagram of a 4-pointed star shape"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "4 triangles and 1 square"
+            },
+            {
+              "label": "B",
+              "value": "8 triangles"
+            },
+            {
+              "label": "C",
+              "value": "4 kites"
+            },
+            {
+              "label": "D",
+              "value": "2 rectangles"
+            },
+            {
+              "label": "E",
+              "value": "4 right-angled triangles and 1 square"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "A 4-pointed star has sharp tips extending outward — two rectangles overlapping would produce an octagonal outline, not a star with pointed tips. All other options can produce a star shape.",
+          "working": "Identify geometrically impossible combination → Answer D"
+        },
+        {
+          "id": "shape_009",
+          "question_text": "The diagram shows a symmetrical hourglass shape.\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"80,30 240,30 200,130 240,230 80,230 120,130\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"160\" y=\"260\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Hourglass (6 sides)</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_009.png",
+            "alt_text": "Diagram of a symmetrical hourglass shape"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2 trapeziums"
+            },
+            {
+              "label": "B",
+              "value": "4 triangles"
+            },
+            {
+              "label": "C",
+              "value": "2 right-angled triangles and 1 rectangle"
+            },
+            {
+              "label": "D",
+              "value": "2 pentagons"
+            },
+            {
+              "label": "E",
+              "value": "2 triangles"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "Cutting the hourglass in half produces two quadrilaterals (4-sided shapes), not pentagons (5-sided). There is no way to divide this hourglass into exactly 2 pentagons.",
+          "working": "Identify geometrically impossible combination → Answer D"
+        },
+        {
+          "id": "shape_010",
+          "question_text": "The diagram shows a wide V-shaped chevron pointing upward.\nThis shape can be made by putting other shapes together.\n\nWhich combination could NOT make this shape?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"280\" viewBox=\"0 0 320 280\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"55,60 160,135 265,60 265,95 160,170 55,95\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><text x=\"160\" y=\"200\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Chevron (6 sides)</text></svg>",
+            "suggested_s3_key": "11plus/math/shape_decomp/shape_010.png",
+            "alt_text": "Diagram of a wide V-shaped chevron pointing upward"
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "2 right-angled triangles"
+            },
+            {
+              "label": "B",
+              "value": "1 isosceles and 2 right-angled triangles"
+            },
+            {
+              "label": "C",
+              "value": "2 pentagons"
+            },
+            {
+              "label": "D",
+              "value": "2 obtuse triangles"
+            },
+            {
+              "label": "E",
+              "value": "4 triangles"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Each half of the chevron (split down the line of symmetry) is a 4-sided shape (quadrilateral), not a 5-sided pentagon. You cannot split this chevron into 2 pentagons.",
+          "working": "Identify geometrically impossible combination → Answer C"
+        }
+      ]
+    },
+    {
+      "bank_id": "polygon_division",
+      "topic": "Dividing Regular Polygons into Quadrilaterals",
+      "source_q": "Q39",
+      "image_required": true,
+      "difficulty": "hard",
+      "skill": "Identify quadrilateral type (kite, rhombus, trapezium, rectangle, parallelogram) from how a regular polygon is divided.",
+      "questions": [
+        {
+          "id": "poly_001",
+          "question_text": "The diagram shows a regular 8-sided polygon.\nStraight lines divide it into 4 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 230.7,59.3 260.0,130.0 230.7,200.7 160.0,230.0 89.3,200.7 60.0,130.0 89.3,59.3\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"160.0\" y1=\"30.0\" x2=\"160.0\" y2=\"230.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"260.0\" y1=\"130.0\" x2=\"60.0\" y2=\"130.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular octagon divided by 2 vertex-to-vertex lines</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_001.png",
+            "alt_text": "Regular octagon divided by 2 vertex-to-vertex lines. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "rectangles"
+            },
+            {
+              "label": "B",
+              "value": "squares"
+            },
+            {
+              "label": "C",
+              "value": "parallelograms"
+            },
+            {
+              "label": "D",
+              "value": "trapeziums"
+            },
+            {
+              "label": "E",
+              "value": "kites"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Connecting opposite vertices of a regular octagon with 2 lines creates 4 kite shapes. Each kite has 2 pairs of equal adjacent sides and one axis of symmetry. The angles are not 90 degrees so they are not rectangles or squares.",
+          "working": "Analyse angles and side lengths of each piece → kites"
+        },
+        {
+          "id": "poly_002",
+          "question_text": "The diagram shows a regular 6-sided polygon.\nStraight lines divide it into 3 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 246.6,80.0 246.6,180.0 160.0,230.0 73.4,180.0 73.4,80.0\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"160.0\" y1=\"30.0\" x2=\"160.0\" y2=\"230.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"246.6\" y1=\"80.0\" x2=\"73.4\" y2=\"180.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"246.6\" y1=\"180.0\" x2=\"73.4\" y2=\"80.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular hexagon divided by 3 diameters</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_002.png",
+            "alt_text": "Regular hexagon divided by 3 diameters. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "rectangles"
+            },
+            {
+              "label": "B",
+              "value": "squares"
+            },
+            {
+              "label": "C",
+              "value": "rhombuses"
+            },
+            {
+              "label": "D",
+              "value": "trapeziums"
+            },
+            {
+              "label": "E",
+              "value": "kites"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Three lines connecting opposite vertices of a regular hexagon create 6 equilateral triangles — or viewed differently, 3 rhombuses. Each rhombus has 4 equal sides with angles of 60 and 120 degrees (not 90 degrees, so not a square).",
+          "working": "Analyse angles and side lengths of each piece → rhombuses"
+        },
+        {
+          "id": "poly_003",
+          "question_text": "The diagram shows a regular 8-sided polygon.\nStraight lines divide it into 4 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 230.7,59.3 260.0,130.0 230.7,200.7 160.0,230.0 89.3,200.7 60.0,130.0 89.3,59.3\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"230.7\" y1=\"59.3\" x2=\"89.3\" y2=\"200.7\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"230.7\" y1=\"200.7\" x2=\"89.3\" y2=\"59.3\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular octagon divided by 2 side-midpoint lines</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_003.png",
+            "alt_text": "Regular octagon divided by 2 side-midpoint lines. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "kites"
+            },
+            {
+              "label": "B",
+              "value": "rectangles"
+            },
+            {
+              "label": "C",
+              "value": "squares"
+            },
+            {
+              "label": "D",
+              "value": "trapeziums"
+            },
+            {
+              "label": "E",
+              "value": "parallelograms"
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "Lines connecting midpoints of opposite sides of a regular octagon produce 4 equal rectangles. These have right-angle corners but unequal sides, so they are rectangles not squares.",
+          "working": "Analyse angles and side lengths of each piece → rectangles"
+        },
+        {
+          "id": "poly_004",
+          "question_text": "The diagram shows a regular 12-sided polygon.\nStraight lines divide it into 6 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 210.0,43.4 246.6,80.0 260.0,130.0 246.6,180.0 210.0,216.6 160.0,230.0 110.0,216.6 73.4,180.0 60.0,130.0 73.4,80.0 110.0,43.4\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"160.0\" y1=\"30.0\" x2=\"160.0\" y2=\"230.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"246.6\" y1=\"80.0\" x2=\"73.4\" y2=\"180.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"246.6\" y1=\"180.0\" x2=\"73.4\" y2=\"80.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular 12-sided polygon divided by 3 diameters</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_004.png",
+            "alt_text": "Regular 12-sided polygon divided by 3 diameters. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "squares"
+            },
+            {
+              "label": "B",
+              "value": "kites"
+            },
+            {
+              "label": "C",
+              "value": "rectangles"
+            },
+            {
+              "label": "D",
+              "value": "rhombuses"
+            },
+            {
+              "label": "E",
+              "value": "trapeziums"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "Three long diameters of a regular 12-gon divide it into 6 rhombuses. Each has 4 equal sides but angles of 60 and 120 degrees — like squashed diamonds.",
+          "working": "Analyse angles and side lengths of each piece → rhombuses"
+        },
+        {
+          "id": "poly_005",
+          "question_text": "The diagram shows a regular 8-sided polygon.\nStraight lines divide it into 4 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 230.7,59.3 260.0,130.0 230.7,200.7 160.0,230.0 89.3,200.7 60.0,130.0 89.3,59.3\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"160.0\" y1=\"30.0\" x2=\"160.0\" y2=\"230.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"260.0\" y1=\"130.0\" x2=\"60.0\" y2=\"130.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular octagon — lines through opposite vertices</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_005.png",
+            "alt_text": "Regular octagon — lines through opposite vertices. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "kites"
+            },
+            {
+              "label": "B",
+              "value": "rectangles"
+            },
+            {
+              "label": "C",
+              "value": "squares"
+            },
+            {
+              "label": "D",
+              "value": "parallelograms"
+            },
+            {
+              "label": "E",
+              "value": "rhombuses"
+            }
+          ],
+          "correct_answer": "A",
+          "explanation": "The diagonal of a regular octagon from vertex to opposite vertex, drawn twice, creates 4 equal kite shapes. A kite: 2 pairs of consecutive equal sides, 1 axis of symmetry. Not a rhombus (sides are unequal) and not a rectangle (angles not 90 degrees).",
+          "working": "Analyse angles and side lengths of each piece → kites"
+        },
+        {
+          "id": "poly_006",
+          "question_text": "The diagram shows a regular 6-sided polygon.\nStraight lines divide it into 2 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 246.6,80.0 246.6,180.0 160.0,230.0 73.4,180.0 73.4,80.0\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"160.0\" y1=\"30.0\" x2=\"160.0\" y2=\"230.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular hexagon divided by 1 diameter</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_006.png",
+            "alt_text": "Regular hexagon divided by 1 diameter. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "kites"
+            },
+            {
+              "label": "B",
+              "value": "rectangles"
+            },
+            {
+              "label": "C",
+              "value": "rhombuses"
+            },
+            {
+              "label": "D",
+              "value": "trapeziums"
+            },
+            {
+              "label": "E",
+              "value": "parallelograms"
+            }
+          ],
+          "correct_answer": "D",
+          "explanation": "One line from vertex to opposite vertex in a regular hexagon creates 2 equal trapeziums. Each has exactly one pair of parallel sides (the diameter at the base) making it a trapezium, not a parallelogram.",
+          "working": "Analyse angles and side lengths of each piece → trapeziums"
+        },
+        {
+          "id": "poly_007",
+          "question_text": "The diagram shows a regular 10-sided polygon.\nStraight lines divide it into 5 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 218.8,49.1 255.1,99.1 255.1,160.9 218.8,210.9 160.0,230.0 101.2,210.9 64.9,160.9 64.9,99.1 101.2,49.1\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"160.0\" y1=\"30.0\" x2=\"160.0\" y2=\"230.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"255.1\" y1=\"99.1\" x2=\"64.9\" y2=\"160.9\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"218.8\" y1=\"210.9\" x2=\"101.2\" y2=\"49.1\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular 10-sided polygon (decagon) divided by 3 diameters</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_007.png",
+            "alt_text": "Regular 10-sided polygon (decagon) divided by 3 diameters. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "rectangles"
+            },
+            {
+              "label": "B",
+              "value": "squares"
+            },
+            {
+              "label": "C",
+              "value": "kites"
+            },
+            {
+              "label": "D",
+              "value": "trapeziums"
+            },
+            {
+              "label": "E",
+              "value": "parallelograms"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "Three alternating vertex-to-vertex lines in a regular decagon create kite-shaped sections. Each kite has 2 pairs of adjacent equal sides and an axis of symmetry along the dividing line.",
+          "working": "Analyse angles and side lengths of each piece → kites"
+        },
+        {
+          "id": "poly_008",
+          "question_text": "The diagram shows a regular 8-sided polygon.\nStraight lines divide it into 4 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 230.7,59.3 260.0,130.0 230.7,200.7 160.0,230.0 89.3,200.7 60.0,130.0 89.3,59.3\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"160.0\" y1=\"30.0\" x2=\"160.0\" y2=\"230.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"230.7\" y1=\"59.3\" x2=\"89.3\" y2=\"200.7\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"260.0\" y1=\"130.0\" x2=\"60.0\" y2=\"130.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"230.7\" y1=\"200.7\" x2=\"89.3\" y2=\"59.3\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular octagon divided by 4 diameters</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_008.png",
+            "alt_text": "Regular octagon divided by 4 diameters. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "kites"
+            },
+            {
+              "label": "B",
+              "value": "squares"
+            },
+            {
+              "label": "C",
+              "value": "parallelograms"
+            },
+            {
+              "label": "D",
+              "value": "rectangles"
+            },
+            {
+              "label": "E",
+              "value": "rhombuses"
+            }
+          ],
+          "correct_answer": "A",
+          "explanation": "All 4 vertex-to-vertex lines of a regular octagon divide it into 8 identical kite shapes. Each kite is symmetrical with 2 pairs of equal adjacent sides.",
+          "working": "Analyse angles and side lengths of each piece → kites"
+        },
+        {
+          "id": "poly_009",
+          "question_text": "The diagram shows a regular 6-sided polygon.\nStraight lines divide it into 3 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 246.6,80.0 246.6,180.0 160.0,230.0 73.4,180.0 73.4,80.0\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"160.0\" y1=\"30.0\" x2=\"160.0\" y2=\"230.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"246.6\" y1=\"180.0\" x2=\"73.4\" y2=\"80.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular hexagon — 2 non-parallel diameters</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_009.png",
+            "alt_text": "Regular hexagon — 2 non-parallel diameters. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "kites"
+            },
+            {
+              "label": "B",
+              "value": "rectangles"
+            },
+            {
+              "label": "C",
+              "value": "squares"
+            },
+            {
+              "label": "D",
+              "value": "trapeziums"
+            },
+            {
+              "label": "E",
+              "value": "parallelograms"
+            }
+          ],
+          "correct_answer": "E",
+          "explanation": "Two non-parallel diameters of a regular hexagon create sections where opposite sides are parallel but angles are not 90 degrees — these are parallelograms. Unlike rhombuses, the sides are not all equal.",
+          "working": "Analyse angles and side lengths of each piece → parallelograms"
+        },
+        {
+          "id": "poly_010",
+          "question_text": "The diagram shows a regular 8-sided polygon.\nStraight lines divide it into 4 equal quadrilaterals that are all the same size and shape.\n\nWhat kind of quadrilateral are they?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"320\" height=\"270\" viewBox=\"0 0 320 270\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><polygon points=\"160.0,30.0 230.7,59.3 260.0,130.0 230.7,200.7 160.0,230.0 89.3,200.7 60.0,130.0 89.3,59.3\" fill=\"none\" stroke=\"#333\" stroke-width=\"2.5\"/><line x1=\"160.0\" y1=\"30.0\" x2=\"160.0\" y2=\"230.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><line x1=\"260.0\" y1=\"130.0\" x2=\"60.0\" y2=\"130.0\" stroke=\"#999\" stroke-width=\"1.5\" stroke-dasharray=\"5,3\"/><text x=\"160\" y=\"255\" text-anchor=\"middle\" font-size=\"11\" fill=\"#666\">Regular octagon — two symmetry lines through vertices</text></svg>",
+            "suggested_s3_key": "11plus/math/polygon_div/poly_010.png",
+            "alt_text": "Regular octagon — two symmetry lines through vertices. Dashed lines show how the polygon is divided."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "trapeziums"
+            },
+            {
+              "label": "B",
+              "value": "kites"
+            },
+            {
+              "label": "C",
+              "value": "squares"
+            },
+            {
+              "label": "D",
+              "value": "rectangles"
+            },
+            {
+              "label": "E",
+              "value": "parallelograms"
+            }
+          ],
+          "correct_answer": "B",
+          "explanation": "Two lines of symmetry through opposite vertices of a regular octagon divide it into 4 equal kites. Remember: kites have 2 pairs of consecutive equal sides and 1 axis of symmetry — unlike squares which have all equal sides and all 90-degree angles.",
+          "working": "Analyse angles and side lengths of each piece → kites"
+        }
+      ]
+    },
+    {
+      "bank_id": "border_tiling",
+      "topic": "Border Tiling and Area",
+      "source_q": "Q50",
+      "image_required": true,
+      "difficulty": "hard",
+      "skill": "Tiles = (outer area - inner area) / tile area. Border width = tile size x number of rows.",
+      "questions": [
+        {
+          "id": "tile_001",
+          "question_text": "A bathroom floor is 202 cm long and 122 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 2 cm x 2 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"277\" height=\"205\" viewBox=\"0 0 277 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"182\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"59\" y=\"49\" width=\"175\" height=\"103\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"146\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">202 cm</text><text x=\"247\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,247,100)\">122 cm</text><text x=\"146\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 2cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_001.png",
+            "alt_text": "Rectangle 202cm x 122cm with a 4cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "624"
+            },
+            {
+              "label": "B",
+              "value": "628"
+            },
+            {
+              "label": "C",
+              "value": "632"
+            },
+            {
+              "label": "D",
+              "value": "636"
+            },
+            {
+              "label": "E",
+              "value": "640"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 2cm tiles = 2 x 2 = 4 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 202 - 2x4 = 194 cm\nInner width  = 122 - 2x4 = 114 cm\n\nSTEP 3 — Border area:\nOuter area = 202 x 122 = 24644 cm2\nInner area = 194 x 114 = 22116 cm2\nBorder area = 24644 - 22116 = 2528 cm2\n\nSTEP 4 — Count tiles:\nTile area = 2 x 2 = 4 cm2\nTiles = 2528 / 4 = 632",
+          "working": "(202x122) - (194x114) = 2528 cm2 / 4 = 632 tiles"
+        },
+        {
+          "id": "tile_002",
+          "question_text": "A kitchen floor is 300 cm long and 200 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 2 cm x 2 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"260\" height=\"205\" viewBox=\"0 0 260 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"165\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"57\" y=\"47\" width=\"161\" height=\"106\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"138\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">300 cm</text><text x=\"230\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,230,100)\">200 cm</text><text x=\"138\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 2cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_002.png",
+            "alt_text": "Rectangle 300cm x 200cm with a 4cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "976"
+            },
+            {
+              "label": "B",
+              "value": "980"
+            },
+            {
+              "label": "C",
+              "value": "984"
+            },
+            {
+              "label": "D",
+              "value": "988"
+            },
+            {
+              "label": "E",
+              "value": "992"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 2cm tiles = 2 x 2 = 4 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 300 - 2x4 = 292 cm\nInner width  = 200 - 2x4 = 192 cm\n\nSTEP 3 — Border area:\nOuter area = 300 x 200 = 60000 cm2\nInner area = 292 x 192 = 56064 cm2\nBorder area = 60000 - 56064 = 3936 cm2\n\nSTEP 4 — Count tiles:\nTile area = 2 x 2 = 4 cm2\nTiles = 3936 / 4 = 984",
+          "working": "(300x200) - (292x192) = 3936 cm2 / 4 = 984 tiles"
+        },
+        {
+          "id": "tile_003",
+          "question_text": "A swimming pool floor is 250 cm long and 150 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 5 cm x 5 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"278\" height=\"205\" viewBox=\"0 0 278 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"183\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"62\" y=\"52\" width=\"169\" height=\"95\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"147\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">250 cm</text><text x=\"248\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,248,100)\">150 cm</text><text x=\"147\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 5cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_003.png",
+            "alt_text": "Rectangle 250cm x 150cm with a 10cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "296"
+            },
+            {
+              "label": "B",
+              "value": "300"
+            },
+            {
+              "label": "C",
+              "value": "304"
+            },
+            {
+              "label": "D",
+              "value": "308"
+            },
+            {
+              "label": "E",
+              "value": "312"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 5cm tiles = 2 x 5 = 10 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 250 - 2x10 = 230 cm\nInner width  = 150 - 2x10 = 130 cm\n\nSTEP 3 — Border area:\nOuter area = 250 x 150 = 37500 cm2\nInner area = 230 x 130 = 29900 cm2\nBorder area = 37500 - 29900 = 7600 cm2\n\nSTEP 4 — Count tiles:\nTile area = 5 x 5 = 25 cm2\nTiles = 7600 / 25 = 304",
+          "working": "(250x150) - (230x130) = 7600 cm2 / 25 = 304 tiles"
+        },
+        {
+          "id": "tile_004",
+          "question_text": "A hallway floor is 180 cm long and 120 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 3 cm x 3 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"260\" height=\"205\" viewBox=\"0 0 260 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"165\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"60\" y=\"50\" width=\"154\" height=\"99\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"138\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">180 cm</text><text x=\"230\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,230,100)\">120 cm</text><text x=\"138\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 3cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_004.png",
+            "alt_text": "Rectangle 180cm x 120cm with a 6cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "376"
+            },
+            {
+              "label": "B",
+              "value": "380"
+            },
+            {
+              "label": "C",
+              "value": "384"
+            },
+            {
+              "label": "D",
+              "value": "388"
+            },
+            {
+              "label": "E",
+              "value": "392"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 3cm tiles = 2 x 3 = 6 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 180 - 2x6 = 168 cm\nInner width  = 120 - 2x6 = 108 cm\n\nSTEP 3 — Border area:\nOuter area = 180 x 120 = 21600 cm2\nInner area = 168 x 108 = 18144 cm2\nBorder area = 21600 - 18144 = 3456 cm2\n\nSTEP 4 — Count tiles:\nTile area = 3 x 3 = 9 cm2\nTiles = 3456 / 9 = 384",
+          "working": "(180x120) - (168x108) = 3456 cm2 / 9 = 384 tiles"
+        },
+        {
+          "id": "tile_005",
+          "question_text": "A garden patio floor is 400 cm long and 250 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 4 cm x 4 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"271\" height=\"205\" viewBox=\"0 0 271 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"176\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"59\" y=\"49\" width=\"169\" height=\"103\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"143\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">400 cm</text><text x=\"241\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,241,100)\">250 cm</text><text x=\"143\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 4cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_005.png",
+            "alt_text": "Rectangle 400cm x 250cm with a 8cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "626"
+            },
+            {
+              "label": "B",
+              "value": "630"
+            },
+            {
+              "label": "C",
+              "value": "634"
+            },
+            {
+              "label": "D",
+              "value": "638"
+            },
+            {
+              "label": "E",
+              "value": "642"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 4cm tiles = 2 x 4 = 8 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 400 - 2x8 = 384 cm\nInner width  = 250 - 2x8 = 234 cm\n\nSTEP 3 — Border area:\nOuter area = 400 x 250 = 100000 cm2\nInner area = 384 x 234 = 89856 cm2\nBorder area = 100000 - 89856 = 10144 cm2\n\nSTEP 4 — Count tiles:\nTile area = 4 x 4 = 16 cm2\nTiles = 10144 / 16 = 634",
+          "working": "(400x250) - (384x234) = 10144 cm2 / 16 = 634 tiles"
+        },
+        {
+          "id": "tile_006",
+          "question_text": "A shower room floor is 160 cm long and 100 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 2 cm x 2 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"271\" height=\"205\" viewBox=\"0 0 271 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"176\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"59\" y=\"49\" width=\"167\" height=\"101\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"143\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">160 cm</text><text x=\"241\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,241,100)\">100 cm</text><text x=\"143\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 2cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_006.png",
+            "alt_text": "Rectangle 160cm x 100cm with a 4cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "496"
+            },
+            {
+              "label": "B",
+              "value": "500"
+            },
+            {
+              "label": "C",
+              "value": "504"
+            },
+            {
+              "label": "D",
+              "value": "508"
+            },
+            {
+              "label": "E",
+              "value": "512"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 2cm tiles = 2 x 2 = 4 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 160 - 2x4 = 152 cm\nInner width  = 100 - 2x4 = 92 cm\n\nSTEP 3 — Border area:\nOuter area = 160 x 100 = 16000 cm2\nInner area = 152 x 92 = 13984 cm2\nBorder area = 16000 - 13984 = 2016 cm2\n\nSTEP 4 — Count tiles:\nTile area = 2 x 2 = 4 cm2\nTiles = 2016 / 4 = 504",
+          "working": "(160x100) - (152x92) = 2016 cm2 / 4 = 504 tiles"
+        },
+        {
+          "id": "tile_007",
+          "question_text": "A conservatory floor is 280 cm long and 180 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 2 cm x 2 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"266\" height=\"205\" viewBox=\"0 0 266 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"171\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"57\" y=\"47\" width=\"166\" height=\"105\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"141\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">280 cm</text><text x=\"236\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,236,100)\">180 cm</text><text x=\"141\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 2cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_007.png",
+            "alt_text": "Rectangle 280cm x 180cm with a 4cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "896"
+            },
+            {
+              "label": "B",
+              "value": "900"
+            },
+            {
+              "label": "C",
+              "value": "904"
+            },
+            {
+              "label": "D",
+              "value": "908"
+            },
+            {
+              "label": "E",
+              "value": "912"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 2cm tiles = 2 x 2 = 4 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 280 - 2x4 = 272 cm\nInner width  = 180 - 2x4 = 172 cm\n\nSTEP 3 — Border area:\nOuter area = 280 x 180 = 50400 cm2\nInner area = 272 x 172 = 46784 cm2\nBorder area = 50400 - 46784 = 3616 cm2\n\nSTEP 4 — Count tiles:\nTile area = 2 x 2 = 4 cm2\nTiles = 3616 / 4 = 904",
+          "working": "(280x180) - (272x172) = 3616 cm2 / 4 = 904 tiles"
+        },
+        {
+          "id": "tile_008",
+          "question_text": "A terrace floor is 350 cm long and 200 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 5 cm x 5 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"287\" height=\"205\" viewBox=\"0 0 287 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"193\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"60\" y=\"50\" width=\"182\" height=\"99\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"151\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">350 cm</text><text x=\"258\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,258,100)\">200 cm</text><text x=\"151\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 5cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_008.png",
+            "alt_text": "Rectangle 350cm x 200cm with a 10cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "416"
+            },
+            {
+              "label": "B",
+              "value": "420"
+            },
+            {
+              "label": "C",
+              "value": "424"
+            },
+            {
+              "label": "D",
+              "value": "428"
+            },
+            {
+              "label": "E",
+              "value": "432"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 5cm tiles = 2 x 5 = 10 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 350 - 2x10 = 330 cm\nInner width  = 200 - 2x10 = 180 cm\n\nSTEP 3 — Border area:\nOuter area = 350 x 200 = 70000 cm2\nInner area = 330 x 180 = 59400 cm2\nBorder area = 70000 - 59400 = 10600 cm2\n\nSTEP 4 — Count tiles:\nTile area = 5 x 5 = 25 cm2\nTiles = 10600 / 25 = 424",
+          "working": "(350x200) - (330x180) = 10600 cm2 / 25 = 424 tiles"
+        },
+        {
+          "id": "tile_009",
+          "question_text": "A utility room floor is 240 cm long and 160 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 4 cm x 4 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"260\" height=\"205\" viewBox=\"0 0 260 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"165\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"60\" y=\"50\" width=\"154\" height=\"99\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"138\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">240 cm</text><text x=\"230\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,230,100)\">160 cm</text><text x=\"138\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 4cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_009.png",
+            "alt_text": "Rectangle 240cm x 160cm with a 8cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "376"
+            },
+            {
+              "label": "B",
+              "value": "380"
+            },
+            {
+              "label": "C",
+              "value": "384"
+            },
+            {
+              "label": "D",
+              "value": "388"
+            },
+            {
+              "label": "E",
+              "value": "392"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 4cm tiles = 2 x 4 = 8 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 240 - 2x8 = 224 cm\nInner width  = 160 - 2x8 = 144 cm\n\nSTEP 3 — Border area:\nOuter area = 240 x 160 = 38400 cm2\nInner area = 224 x 144 = 32256 cm2\nBorder area = 38400 - 32256 = 6144 cm2\n\nSTEP 4 — Count tiles:\nTile area = 4 x 4 = 16 cm2\nTiles = 6144 / 16 = 384",
+          "working": "(240x160) - (224x144) = 6144 cm2 / 16 = 384 tiles"
+        },
+        {
+          "id": "tile_010",
+          "question_text": "A basement floor is 320 cm long and 220 cm wide.\nA double row of square tiles makes a border around the edge.\nEach tile is 2 cm x 2 cm.\n\nHow many tiles are needed to make the border?",
+          "image": {
+            "required": true,
+            "format": "svg",
+            "svg_data": "<svg width=\"255\" height=\"205\" viewBox=\"0 0 255 205\" xmlns=\"http://www.w3.org/2000/svg\" font-family=\"Arial,sans-serif\"><rect x=\"55\" y=\"45\" width=\"160\" height=\"110\" fill=\"#d0d8e0\" stroke=\"#333\" stroke-width=\"2\"/><rect x=\"57\" y=\"47\" width=\"156\" height=\"106\" fill=\"white\" stroke=\"#555\" stroke-width=\"1.5\"/><text x=\"135\" y=\"39\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\">320 cm</text><text x=\"225\" y=\"100\" text-anchor=\"middle\" font-size=\"12\" fill=\"#333\" transform=\"rotate(90,225,100)\">220 cm</text><text x=\"135\" y=\"105\" text-anchor=\"middle\" font-size=\"11\" fill=\"#888\">border (2 rows of 2cm tiles)</text></svg>",
+            "suggested_s3_key": "11plus/math/border_tiling/tile_010.png",
+            "alt_text": "Rectangle 320cm x 220cm with a 4cm wide border shaded grey around the edge."
+          },
+          "options": [
+            {
+              "label": "A",
+              "value": "1056"
+            },
+            {
+              "label": "B",
+              "value": "1060"
+            },
+            {
+              "label": "C",
+              "value": "1064"
+            },
+            {
+              "label": "D",
+              "value": "1068"
+            },
+            {
+              "label": "E",
+              "value": "1072"
+            }
+          ],
+          "correct_answer": "C",
+          "explanation": "STEP 1 — Border width:\nDouble row of 2cm tiles = 2 x 2 = 4 cm on each side.\n\nSTEP 2 — Inner (untiled) dimensions:\nInner length = 320 - 2x4 = 312 cm\nInner width  = 220 - 2x4 = 212 cm\n\nSTEP 3 — Border area:\nOuter area = 320 x 220 = 70400 cm2\nInner area = 312 x 212 = 66144 cm2\nBorder area = 70400 - 66144 = 4256 cm2\n\nSTEP 4 — Count tiles:\nTile area = 2 x 2 = 4 cm2\nTiles = 4256 / 4 = 1064",
+          "working": "(320x220) - (312x212) = 4256 cm2 / 4 = 1064 tiles"
+        }
+      ]
+    }
+  ]
+}

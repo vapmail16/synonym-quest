@@ -47,6 +47,11 @@ export const config = {
     GET_USER_PROGRESS: `${API_URL}/api/badges/user/progress`,
     CHECK_BADGES: `${API_URL}/api/badges/check`,
   },
+  MATH_ENDPOINTS: {
+    TOPICS: `${API_URL}/api/math/topics`,
+    QUESTIONS: (bankId: string) => `${API_URL}/api/math/topics/${encodeURIComponent(bankId)}/questions`,
+    QUESTION: (id: string) => `${API_URL}/api/math/questions/${encodeURIComponent(id)}`,
+  },
 };
 
 export default config;

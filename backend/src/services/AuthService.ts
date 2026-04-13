@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import { hashPasswordForStorage } from '../auth/passwordHash';
 import { User, UserSession } from '../models';
 import { Op } from 'sequelize';
 
@@ -36,7 +37,6 @@ export class AuthService {
   private static readonly JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
   private static readonly JWT_EXPIRES_IN = '7d';
   private static readonly REFRESH_TOKEN_EXPIRES_IN = '30d';
-  private static readonly BCRYPT_ROUNDS = 12;
 
   /**
    * Register a new user
@@ -53,8 +53,7 @@ export class AuthService {
       throw new Error('Username is already taken');
     }
 
-    // Hash password
-    const hashedPassword = await bcrypt.hash(data.password, this.BCRYPT_ROUNDS);
+    const hashedPassword = await hashPasswordForStorage(data.password);
 
     // Create user
     const user = await User.createUser({
@@ -231,8 +230,7 @@ export class AuthService {
       throw new Error('Current password is incorrect');
     }
 
-    // Hash new password
-    const hashedPassword = await bcrypt.hash(newPassword, this.BCRYPT_ROUNDS);
+    const hashedPassword = await hashPasswordForStorage(newPassword);
     user.password = hashedPassword;
 
     await user.save();

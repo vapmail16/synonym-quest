@@ -8,6 +8,8 @@ import { initUserSessionModel } from './UserSession';
 import { initUserProgressModel, UserProgressModel } from './UserProgress';
 import { initBadgeModel, BadgeModel } from './Badge';
 import { initUserBadgeModel, UserBadgeModel } from './UserBadge';
+import { initMathTopicModel, MathTopicModel } from './MathTopic';
+import { initMathQuestionModel, MathQuestionModel } from './MathQuestion';
 
 // Initialize models
 const Word = initWordModel(sequelize);
@@ -19,6 +21,8 @@ const UserSession = initUserSessionModel(sequelize);
 const UserProgress = initUserProgressModel(sequelize);
 const Badge = initBadgeModel(sequelize);
 const UserBadge = initUserBadgeModel(sequelize);
+const MathTopic = initMathTopicModel(sequelize);
+const MathQuestion = initMathQuestionModel(sequelize);
 
 // Define associations
 Word.hasMany(UserProgress, { foreignKey: 'wordId', as: 'userProgress' });
@@ -37,6 +41,9 @@ UserBadge.belongsTo(User, { foreignKey: 'userId', as: 'user', constraints: false
 
 Badge.hasMany(UserBadge, { foreignKey: 'badgeId', as: 'userBadges', constraints: false });
 UserBadge.belongsTo(Badge, { foreignKey: 'badgeId', as: 'badge', constraints: false });
+
+MathTopic.hasMany(MathQuestion, { foreignKey: 'mathTopicId', as: 'questions' });
+MathQuestion.belongsTo(MathTopic, { foreignKey: 'mathTopicId', as: 'topic' });
 
 // Database initialization
 export const initDatabase = async (): Promise<void> => {
@@ -70,8 +77,12 @@ export {
   UserProgress,
   Badge,
   UserBadge,
+  MathTopic,
+  MathQuestion,
   BadgeModel,
   UserBadgeModel,
-  UserProgressModel
+  UserProgressModel,
+  MathTopicModel,
+  MathQuestionModel,
 };
 export type { WordModel, QuizSessionModel, GameProgressModel, DailyQuestModel };
