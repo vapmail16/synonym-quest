@@ -1,0 +1,325 @@
+/* 11+ Maths — aligned with vocabulary (Games.css): cards, gradients, rounded UI */
+
+.math-practice {
+  --math-radius-lg: 15px;
+  --math-radius-md: 12px;
+  --math-radius-sm: 10px;
+  --math-text: #2c3e50;
+  --math-muted: #64748b;
+  --math-border: #ecf0f1;
+  --math-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --math-shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.math-practice--loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 280px;
+}
+
+.math-practice__loading-card {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  background: white;
+  border-radius: var(--math-radius-lg);
+  box-shadow: var(--math-shadow);
+  border: 2px solid #f8f9fa;
+  max-width: 360px;
+  width: 100%;
+  color: var(--math-muted);
+  font-size: 1.05rem;
+}
+
+.math-practice__spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid #e9ecef;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: math-practice-spin 0.9s linear infinite;
+  margin: 0 auto 1.25rem;
+}
+
+@keyframes math-practice-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.math-practice__hero {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: var(--math-radius-lg);
+  padding: 1.75rem 1.5rem;
+  color: white;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--math-shadow);
+}
+
+.math-practice__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.math-practice__intro {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  opacity: 0.95;
+}
+
+.math-practice__panel,
+.math-practice__empty-panel,
+.math-practice__error-panel {
+  background: white;
+  border-radius: var(--math-radius-lg);
+  padding: 1.5rem 1.35rem;
+  box-shadow: var(--math-shadow);
+  border: 2px solid #f8f9fa;
+  margin-bottom: 1.25rem;
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.math-practice__panel:hover {
+  box-shadow: var(--math-shadow-hover);
+}
+
+.math-practice__panel-title {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--math-text);
+  padding-bottom: 0.65rem;
+  border-bottom: 2px solid var(--math-border);
+  text-align: center;
+}
+
+.math-practice__label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #34495e;
+  font-size: 0.95rem;
+}
+
+.math-practice__select {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #bdc3c7;
+  border-radius: var(--math-radius-sm);
+  font-size: 1.05rem;
+  background: white;
+  color: var(--math-text);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.math-practice__select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+.math-practice__q-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.math-practice__q-nav-label {
+  font-weight: 600;
+  color: #34495e;
+  margin-right: 0.35rem;
+  width: 100%;
+  margin-bottom: 0.25rem;
+}
+
+@media (min-width: 480px) {
+  .math-practice__q-nav-label {
+    width: auto;
+    margin-bottom: 0;
+  }
+}
+
+.math-practice__q-pill {
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.65rem;
+  border-radius: var(--math-radius-sm);
+  border: 2px solid #bdc3c7;
+  background: white;
+  color: var(--math-text);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.math-practice__q-pill:hover {
+  border-color: #3498db;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.25);
+}
+
+.math-practice__q-pill--active {
+  border-color: transparent;
+  background: linear-gradient(135deg, #2196f3, #1976d2);
+  color: white;
+  box-shadow: 0 4px 14px rgba(33, 150, 243, 0.45);
+}
+
+.math-practice__question-shell {
+  margin-top: 0.5rem;
+}
+
+.math-practice__question-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: var(--math-radius-lg);
+  padding: 1.5rem 1.35rem;
+  border: 2px solid #e8eef3;
+  box-shadow: var(--math-shadow);
+}
+
+.math-practice__skill {
+  display: inline-block;
+  margin: 0 0 1rem;
+  padding: 0.35rem 0.85rem;
+  background: #3498db;
+  color: white;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.math-practice__diagram {
+  margin-bottom: 1.15rem;
+  max-width: 100%;
+  overflow: auto;
+  padding: 0.75rem;
+  background: white;
+  border-radius: var(--math-radius-md);
+  border: 1px solid var(--math-border);
+}
+
+.math-practice__question-text {
+  white-space: pre-wrap;
+  font-size: 1.1rem;
+  line-height: 1.55;
+  color: var(--math-text);
+  margin: 0 0 1.25rem;
+  font-weight: 600;
+}
+
+.math-practice__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+/* Reuse Games vocabulary .option-button; this class scopes width for long text */
+.math-practice__option {
+  width: 100%;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  text-transform: none !important;
+  min-height: auto !important;
+  max-height: none !important;
+  padding: 14px 18px !important;
+  align-items: flex-start !important;
+}
+
+.math-practice__actions {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.math-practice__btn-primary {
+  padding: 12px 22px;
+  border: none;
+  border-radius: var(--math-radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #00bcd4, #0097a7);
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.math-practice__btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 188, 212, 0.45);
+}
+
+.math-practice__btn-secondary {
+  padding: 12px 22px;
+  border: 2px solid #00acc1;
+  border-radius: var(--math-radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #00838f;
+  background: white;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.math-practice__btn-secondary:hover {
+  background: #e0f7fa;
+  transform: translateY(-2px);
+}
+
+.math-practice__answer-box {
+  margin-top: 1.1rem;
+  padding: 1rem 1.1rem;
+  background: linear-gradient(135deg, #e8f8f0 0%, #d4edda 100%);
+  border-radius: var(--math-radius-md);
+  border: 2px solid #6ee7b7;
+  color: #065f46;
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.math-practice__answer-box strong {
+  color: #047857;
+}
+
+.math-practice__explain-box {
+  margin-top: 1.1rem;
+  padding: 1rem 1.1rem;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-radius: var(--math-radius-md);
+  border: 2px solid #fcd34d;
+  white-space: pre-wrap;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: #78350f;
+}
+
+.math-practice__empty-panel h2,
+.math-practice__error-panel h2 {
+  margin-top: 0;
+  color: var(--math-text);
+  font-size: 1.5rem;
+}
+
+.math-practice__empty-panel code {
+  background: #f1f5f9;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+
+.math-practice__error-panel p {
+  color: #b91c1c;
+  margin: 0;
+}

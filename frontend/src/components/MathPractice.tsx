@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import config from '../config/api';
 import authService from '../services/authService';
+import './MathPractice.css';
 
 export interface MathTopicRow {
   id: string;
@@ -115,27 +116,39 @@ const MathPractice: React.FC = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b' }}>Loading maths topics…</div>
+      <div className="games-app math-practice math-practice--loading">
+        <div
+          className="math-practice__loading-card"
+          role="status"
+          aria-label="Loading maths topics"
+        >
+          <div className="math-practice__spinner" aria-hidden />
+          <p style={{ margin: 0 }}>Loading maths topics…</p>
+        </div>
+      </div>
     );
   }
 
   if (error && topics.length === 0) {
     return (
-      <div style={{ padding: '2rem', maxWidth: 640, margin: '0 auto' }}>
-        <p style={{ color: '#b91c1c' }}>{error}</p>
+      <div className="games-app math-practice">
+        <div className="math-practice__error-panel">
+          <p>{error}</p>
+        </div>
       </div>
     );
   }
 
   if (topics.length === 0) {
     return (
-      <div style={{ padding: '2rem', maxWidth: 640, margin: '0 auto' }}>
-        <h2 style={{ color: '#1e293b' }}>11+ Maths</h2>
-        <p style={{ color: '#64748b' }}>
-          No topics in the database yet. Ask a parent to run{' '}
-          <code style={{ background: '#f1f5f9', padding: '2px 6px', borderRadius: 4 }}>npm run seed:math</code>{' '}
-          in the backend folder, then restart the server.
-        </p>
+      <div className="games-app math-practice">
+        <div className="math-practice__empty-panel">
+          <h2>11+ Maths</h2>
+          <p style={{ color: 'var(--math-muted)', lineHeight: 1.6 }}>
+            No topics in the database yet. Ask a parent to run{' '}
+            <code>npm run seed:math</code> in the backend folder, then restart the server.
+          </p>
+        </div>
       </div>
     );
   }
@@ -144,29 +157,25 @@ const MathPractice: React.FC = () => {
   const topicMeta = topics.find(t => t.bankId === bankId);
 
   return (
-    <div style={{ maxWidth: 960, margin: '0 auto', padding: '1.5rem' }}>
-      <h2 style={{ marginTop: 0, color: '#1e293b' }}>11+ Maths practice</h2>
-      <p style={{ color: '#64748b', marginBottom: '1.25rem' }}>
-        Pick a topic, then a question. Tap an option to choose. Reveal the answer and explanation only when you are ready.
-      </p>
+    <div className="games-app math-practice">
+      <div className="math-practice__hero">
+        <h2 className="math-practice__title">11+ Maths practice</h2>
+        <p className="math-practice__intro">
+          Pick a topic, then a question. Tap an option to choose. Reveal the answer and explanation only when you
+          are ready.
+        </p>
+      </div>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <label htmlFor="math-topic" style={{ display: 'block', fontWeight: 600, marginBottom: 6, color: '#334155' }}>
+      <div className="math-practice__topic-panel math-practice__panel">
+        <h3 className="math-practice__panel-title">Choose your topic</h3>
+        <label htmlFor="math-topic" className="math-practice__label">
           Topic
         </label>
         <select
           id="math-topic"
+          className="math-practice__select"
           value={bankId || ''}
           onChange={e => setBankId(e.target.value || null)}
-          style={{
-            width: '100%',
-            maxWidth: 480,
-            padding: '10px 12px',
-            fontSize: 16,
-            borderRadius: 8,
-            border: '1px solid #cbd5e1',
-            background: '#fff',
-          }}
         >
           <option value="">— Select topic —</option>
           {topics.map(t => (
@@ -175,161 +184,93 @@ const MathPractice: React.FC = () => {
             </option>
           ))}
         </select>
-      </div>
 
-      {bankId && questions.length > 0 && (
-        <div style={{ marginBottom: '1.25rem' }}>
-          <span style={{ fontWeight: 600, color: '#334155', marginRight: 8 }}>Question:</span>
-          {questions.map((q, i) => (
-            <button
-              key={q.id}
-              type="button"
-              onClick={() => loadQuestion(q.id)}
-              style={{
-                margin: '4px 6px 4px 0',
-                padding: '6px 12px',
-                borderRadius: 8,
-                border: activeId === q.id ? '2px solid #3b82f6' : '1px solid #cbd5e1',
-                background: activeId === q.id ? '#eff6ff' : '#fff',
-                cursor: 'pointer',
-                fontSize: 14,
-              }}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {active && (
-        <div
-          style={{
-            border: '1px solid #e2e8f0',
-            borderRadius: 12,
-            padding: '1.25rem',
-            background: '#fafafa',
-          }}
-        >
-          {topicMeta?.skill && (
-            <p style={{ fontSize: 13, color: '#64748b', marginTop: 0, marginBottom: '0.75rem' }}>
-              <strong>Skill:</strong> {topicMeta.skill}
-            </p>
-          )}
-          {active.svgData && (
-            <div
-              style={{ marginBottom: '1rem', maxWidth: '100%', overflow: 'auto' }}
-              role="img"
-              aria-label={active.imageAltText || 'Question diagram'}
-              dangerouslySetInnerHTML={{ __html: active.svgData }}
-            />
-          )}
-          <div
-            style={{
-              whiteSpace: 'pre-wrap',
-              fontSize: 17,
-              lineHeight: 1.5,
-              color: '#0f172a',
-              marginBottom: '1.25rem',
-            }}
-          >
-            {active.questionText}
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {active.options.map(opt => (
+        {bankId && questions.length > 0 && (
+          <div className="math-practice__q-nav" style={{ marginTop: '1.25rem' }}>
+            <span className="math-practice__q-nav-label">Question</span>
+            {questions.map((q, i) => (
               <button
-                key={opt.label}
+                key={q.id}
                 type="button"
-                onClick={() => setSelectedOption(opt.label)}
-                style={{
-                  textAlign: 'left',
-                  padding: '12px 14px',
-                  borderRadius: 8,
-                  border:
-                    selectedOption === opt.label ? '2px solid #3b82f6' : '1px solid #cbd5e1',
-                  background: selectedOption === opt.label ? '#eff6ff' : '#fff',
-                  cursor: 'pointer',
-                  fontSize: 16,
-                }}
+                className={`math-practice__q-pill${activeId === q.id ? ' math-practice__q-pill--active' : ''}`}
+                onClick={() => loadQuestion(q.id)}
               >
-                <strong>{opt.label}.</strong> {opt.value}
+                {i + 1}
               </button>
             ))}
           </div>
+        )}
+      </div>
 
-          <div style={{ marginTop: '1.5rem', display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            <button
-              type="button"
-              onClick={() => setShowAnswer(v => !v)}
-              style={{
-                padding: '10px 16px',
-                borderRadius: 8,
-                border: 'none',
-                background: '#6366f1',
-                color: '#fff',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              {showAnswer ? 'Hide correct answer' : 'Show correct answer'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowExplanation(v => !v)}
-              style={{
-                padding: '10px 16px',
-                borderRadius: 8,
-                border: '1px solid #6366f1',
-                background: '#fff',
-                color: '#4338ca',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              {showExplanation ? 'Hide explanation' : 'Show explanation'}
-            </button>
+      {active && (
+        <div className="math-practice__question-shell">
+          <div className="math-practice__question-card">
+            {topicMeta?.skill && (
+              <p className="math-practice__skill" title="Skill focus">
+                {topicMeta.skill}
+              </p>
+            )}
+            {active.svgData && (
+              <div
+                className="math-practice__diagram"
+                role="img"
+                aria-label={active.imageAltText || 'Question diagram'}
+                dangerouslySetInnerHTML={{ __html: active.svgData }}
+              />
+            )}
+            <div className="math-practice__question-text">{active.questionText}</div>
+
+            <div className="math-practice__options">
+              {active.options.map(opt => (
+                <button
+                  key={opt.label}
+                  type="button"
+                  className={`option-button math-practice__option${
+                    selectedOption === opt.label ? ' selected' : ''
+                  }`}
+                  onClick={() => setSelectedOption(opt.label)}
+                >
+                  <strong>{opt.label}.</strong> {opt.value}
+                </button>
+              ))}
+            </div>
+
+            <div className="math-practice__actions">
+              <button
+                type="button"
+                className="math-practice__btn-primary"
+                onClick={() => setShowAnswer(v => !v)}
+              >
+                {showAnswer ? 'Hide correct answer' : 'Show correct answer'}
+              </button>
+              <button
+                type="button"
+                className="math-practice__btn-secondary"
+                onClick={() => setShowExplanation(v => !v)}
+              >
+                {showExplanation ? 'Hide explanation' : 'Show explanation'}
+              </button>
+            </div>
+
+            {showAnswer && (
+              <div className="math-practice__answer-box">
+                <strong>Correct answer:</strong>{' '}
+                <span>
+                  {active.correctAnswer}
+                  {correctOption ? ` — ${correctOption.value}` : ''}
+                </span>
+                {active.working && (
+                  <div style={{ marginTop: 8 }}>
+                    <strong>Working:</strong> {active.working}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {showExplanation && (
+              <div className="math-practice__explain-box">{active.explanation}</div>
+            )}
           </div>
-
-          {showAnswer && (
-            <div
-              style={{
-                marginTop: '1rem',
-                padding: '12px 14px',
-                background: '#ecfdf5',
-                borderRadius: 8,
-                border: '1px solid #6ee7b7',
-              }}
-            >
-              <strong style={{ color: '#047857' }}>Correct answer:</strong>{' '}
-              <span style={{ color: '#065f46' }}>
-                {active.correctAnswer}
-                {correctOption ? ` — ${correctOption.value}` : ''}
-              </span>
-              {active.working && (
-                <div style={{ marginTop: 8, fontSize: 14, color: '#047857' }}>
-                  <strong>Working:</strong> {active.working}
-                </div>
-              )}
-            </div>
-          )}
-
-          {showExplanation && (
-            <div
-              style={{
-                marginTop: '1rem',
-                padding: '12px 14px',
-                background: '#fffbeb',
-                borderRadius: 8,
-                border: '1px solid #fcd34d',
-                whiteSpace: 'pre-wrap',
-                fontSize: 15,
-                lineHeight: 1.55,
-                color: '#78350f',
-              }}
-            >
-              {active.explanation}
-            </div>
-          )}
         </div>
       )}
     </div>

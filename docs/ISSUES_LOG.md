@@ -228,3 +228,34 @@ Smoke-test `npm run build` on both **Node 18** (Docker) and **Node 22+** (local)
 
 ---
 
+## Issue: `getByLabelText(/Topic/i)` matched loading status (MathPractice tests)
+
+**Date:** 2026-04-13  
+**Severity:** Low (tests only)  
+**Status:** Resolved
+
+### Problem
+`aria-label="Loading maths topics"` contains the substring `topic`, so `getByLabelText(/Topic/i)` resolved during the loading state and assertions ran before the hero/topic UI mounted.
+
+### Resolution
+Use `getByRole('combobox', { name: /^Topic$/i })` (or an exact label match) for the topic `<select>`.
+
+---
+
+## Issue: CRA dev server fails — `allowedHosts[0] should be a non-empty string`
+
+**Date:** 2026-04-13  
+**Severity:** Medium (blocks `npm start` when `lanUrlForConfig` is missing)  
+**Status:** Resolved in repo
+
+### Problem
+With `proxy` set in `package.json`, CRA sets `allowedHosts: [allowedHost]` where `allowedHost` is `urls.lanUrlForConfig`. If `address.ip()` yields nothing or a non-private IP, `lanUrlForConfig` is `undefined` and webpack-dev-server schema validation fails.
+
+### Resolution
+Set `DANGEROUSLY_DISABLE_HOST_CHECK=true` on the `start` script (development only; CRA documents this override). This sets `allowedHosts` to `'all'`.
+
+### Prevention
+If removing the flag, ensure dev machine reports a private LAN IP or unset `proxy` for local-only API calls.
+
+---
+

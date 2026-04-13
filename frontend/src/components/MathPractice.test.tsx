@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import MathPractice from './MathPractice';
 import authService from '../services/authService';
 import config from '../config/api';
@@ -62,9 +62,78 @@ describe('MathPractice', () => {
       json: async () => ({ success: true, data: [] }),
     });
 
-    render(<MathPractice />);
+    const { container } = render(<MathPractice />);
     await waitFor(() => {
       expect(screen.getByText(/No topics in the database/i)).toBeInTheDocument();
+    });
+    expect(container.querySelector('.math-practice__empty-panel')).toBeTruthy();
+  });
+
+  it('shows a themed loading state', () => {
+    (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
+
+    const { container } = render(<MathPractice />);
+    expect(container.querySelector('.math-practice--loading')).toBeTruthy();
+    expect(screen.getByRole('status', { name: /loading maths/i })).toBeInTheDocument();
+  });
+
+  it('uses vocabulary-style hero and panels when topics load', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => topicsPayload,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => questionsPayload,
+      });
+
+    const { container } = render(<MathPractice />);
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: /^Topic$/i })).toBeInTheDocument()
+    );
+
+    expect(container.querySelector('.math-practice__hero')).toBeTruthy();
+    expect(container.querySelector('.math-practice__topic-panel')).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 2, name: /11\+ Maths practice/i })).toBeInTheDocument();
+  });
+
+  it('styles MCQ options like vocabulary option buttons', async () => {
+    (global.fetch as jest.Mock)
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => topicsPayload,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => questionsPayload,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: true, data: questionsPayload.data[0] }),
+      });
+
+    const { container } = render(<MathPractice />);
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: /^Topic$/i })).toBeInTheDocument()
+    );
+    fireEvent.change(screen.getByRole('combobox', { name: /^Topic$/i }), {
+      target: { value: 'combinations_counting' },
+    });
+    await waitFor(() => expect(screen.getByRole('button', { name: '1' })).toBeInTheDocument());
+    fireEvent.click(screen.getByRole('button', { name: '1' }));
+    await waitFor(() => expect(screen.getByText('How many?')).toBeInTheDocument());
+
+    const card = container.querySelector('.math-practice__question-card');
+    expect(card).toBeTruthy();
+    const options = card ? within(card as HTMLElement).getAllByRole('button') : [];
+    const choiceButtons = options.filter(
+      b => b.textContent?.includes('6') || b.textContent?.includes('10')
+    );
+    expect(choiceButtons.length).toBe(2);
+    choiceButtons.forEach(btn => {
+      expect(btn.className).toMatch(/option-button/);
+      expect(btn.className).toMatch(/math-practice__option/);
     });
   });
 
@@ -84,9 +153,11 @@ describe('MathPractice', () => {
       });
 
     render(<MathPractice />);
-    await waitFor(() => expect(screen.getByLabelText(/Topic/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('combobox', { name: /^Topic$/i })).toBeInTheDocument());
 
-    fireEvent.change(screen.getByLabelText(/Topic/i), { target: { value: 'combinations_counting' } });
+    fireEvent.change(screen.getByRole('combobox', { name: /^Topic$/i }), {
+      target: { value: 'combinations_counting' },
+    });
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledWith(
       config.MATH_ENDPOINTS.QUESTIONS('combinations_counting'),
