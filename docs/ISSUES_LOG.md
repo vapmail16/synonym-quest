@@ -212,10 +212,19 @@ Keep backend tests runnable on current LTS/Current Node; document required `NODE
 `react-scripts start` failed during compile with `SecurityError: Cannot initialize local storage without a --localstorage-file path`, triggered from `html-webpack-plugin` when Node’s experimental Web Storage API is enabled (same class of issue as Jest on Node 25+).
 
 ### Resolution
-Set `NODE_OPTIONS=--no-experimental-webstorage` on the frontend `start`, `build`, and `test` scripts in `frontend/package.json` (mirrors backend test fix).
+Use `frontend/scripts/run-react-scripts.cjs`, which calls `react-scripts` with an environment from `cra-node-env.cjs`: **Node 22+** merges `--no-experimental-webstorage` into `NODE_OPTIONS` for the react-scripts process (so webpack worker processes inherit it). **Node 18–20** leaves `NODE_OPTIONS` unchanged.
+
+### Follow-up: Docker / dcdeploy build failed on Node 18
+
+**Date:** 2026-04-13  
+**Log:** `node: --no-experimental-webstorage is not allowed in NODE_OPTIONS` during `npm run build` in `node:18-alpine`.
+
+**Cause:** Putting that flag in `package.json` via `NODE_OPTIONS=...` is rejected on Node 18. Earlier attempts to pass the flag only on the parent `node` process also failed on Node 25+ because webpack children did not inherit it.
+
+**Resolution:** Version-gated `NODE_OPTIONS` merge (see above). Dockerfile comment documents behavior; `FROM ... AS build` casing fixed.
 
 ### Prevention
-When upgrading Node on this project, smoke-test `npm start` and `npm test` in `frontend/`; if Web Storage errors appear, keep or adjust `NODE_OPTIONS` per Node release notes.
+Smoke-test `npm run build` on both **Node 18** (Docker) and **Node 22+** (local). Run `npm run test:node-scripts` after changing `frontend/scripts/cra-node-env.cjs`.
 
 ---
 

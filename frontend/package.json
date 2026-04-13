@@ -24,9 +24,10 @@
     "typescript": "^4.9.5"
   },
   "scripts": {
-    "start": "NODE_OPTIONS=--no-experimental-webstorage react-scripts start",
-    "build": "NODE_OPTIONS=--no-experimental-webstorage react-scripts build",
-    "test": "NODE_OPTIONS=--no-experimental-webstorage react-scripts test",
+    "start": "node scripts/run-react-scripts.cjs start",
+    "build": "node scripts/run-react-scripts.cjs build",
+    "test": "npm run test:node-scripts && node scripts/run-react-scripts.cjs test",
+    "test:node-scripts": "node --test scripts/cra-node-env.test.cjs",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx}",
     "lint:fix": "eslint src/**/*.{js,jsx,ts,tsx} --fix",

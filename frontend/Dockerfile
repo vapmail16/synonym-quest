@@ -1,5 +1,7 @@
 # Frontend Dockerfile - Ultra simple approach
-FROM node:18-alpine as build
+# Build uses `node scripts/run-react-scripts.cjs build` so Node 18 is not given
+# --no-experimental-webstorage via NODE_OPTIONS (disallowed there on Node 18).
+FROM node:18-alpine AS build
 
 WORKDIR /app
 COPY package*.json ./
