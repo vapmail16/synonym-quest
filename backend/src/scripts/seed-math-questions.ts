@@ -1,6 +1,8 @@
 /**
- * Seed 11+ maths questions from docs/11plus_math_practice_questions.json
+ * Seed 11+ maths questions from JSON under repo docs/.
+ * Default files: practice banks + Paper 8 banks.
  * Run from backend: npm run seed:math
+ * Optional: npm run seed:math -- /abs/path/custom.json [...]
  */
 
 import dotenv from 'dotenv';
@@ -9,6 +11,16 @@ import fs from 'fs';
 import { sequelize, MathTopic, MathQuestion } from '../models';
 
 dotenv.config();
+
+/** Filenames under <repo>/docs/ — processed in order (no overlapping bank_id between files). */
+export const MATH_SEED_DOC_FILENAMES = [
+  '11plus_math_practice_questions.json',
+  '11plus_math_paper8_questions.json',
+] as const;
+
+export function resolveMathSeedPaths(repoRoot: string): string[] {
+  return MATH_SEED_DOC_FILENAMES.map(f => path.join(repoRoot, 'docs', f));
+}
 
 interface JsonBank {
   bank_id: string;
@@ -104,16 +116,30 @@ export async function seedMathQuestions(jsonPath: string): Promise<{ topics: num
 }
 
 async function main() {
-  const jsonPath = path.resolve(__dirname, '../../../docs/11plus_math_practice_questions.json');
-  if (!fs.existsSync(jsonPath)) {
-    console.error('JSON not found:', jsonPath);
-    process.exit(1);
+  const repoRoot = path.resolve(__dirname, '../../..');
+  const cliPaths = process.argv.slice(2).map(p => path.resolve(p));
+  const jsonPaths = cliPaths.length > 0 ? cliPaths : resolveMathSeedPaths(repoRoot);
+
+  for (const jsonPath of jsonPaths) {
+    if (!fs.existsSync(jsonPath)) {
+      console.error('JSON not found:', jsonPath);
+      process.exit(1);
+    }
   }
 
   await sequelize.authenticate();
   await sequelize.sync({ alter: false });
-  const { topics, questions } = await seedMathQuestions(jsonPath);
-  console.log(`✅ Seeded ${topics} topic(s), ${questions} question(s).`);
+
+  let bankBatches = 0;
+  let questionRows = 0;
+  for (const jsonPath of jsonPaths) {
+    const { topics, questions } = await seedMathQuestions(jsonPath);
+    bankBatches += topics;
+    questionRows += questions;
+    console.log(`   … ${path.basename(jsonPath)}: ${topics} bank(s), ${questions} question(s)`);
+  }
+
+  console.log(`✅ Seeded ${jsonPaths.length} file(s): ${bankBatches} bank batch(es), ${questionRows} question row(s).`);
   await sequelize.close();
   process.exit(0);
 }

@@ -5,7 +5,7 @@
 - ✅ **User Authentication**: Complete with user-specific progress tracking
 - ✅ **Backend Infrastructure**: PostgreSQL, APIs, user progress tracking
 - ✅ **Frontend Core**: React app with responsive design
-- ✅ **11+ Maths (practice)**: Topics + MCQ + explanations + inline SVG in DB (`npm run seed:math`); **11+ Maths** nav after sign-in
+- ✅ **11+ Maths (practice + Paper 8)**: Topics + MCQ + explanations + inline SVG in DB (`npm run seed:math` seeds `docs/11plus_math_practice_questions.json` and `docs/11plus_math_paper8_questions.json`); **11+ Maths** nav after sign-in
 - ❌ **PWA Features**: Missing service worker, manifest, offline support
 - ❌ **Enhanced UX**: Missing hints, achievements, advanced analytics
 
